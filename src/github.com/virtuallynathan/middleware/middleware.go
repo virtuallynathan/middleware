@@ -12,10 +12,10 @@ func main() {
 	}
 	handler.SetRoutes(
 		rest.Route{"POST", "/device/add", AddDevice},
-		//rest.Route{"GET", "/device/:id", GetDeviceById},
+		rest.Route{"GET", "/device/:DeviceId", GetDeviceById},
 		//rest.Route{"POST", "/device/sensor", GetDeviceBySensorType},
-		///rest.Route{"GET", "/device/:location", GetDeviceByLocation},
-		//rest.Route{"DELETE", "/device/:id", RemoveDevice}
+		///rest.Route{"GET", "/device/:Devicelocation", GetDeviceByLocation},
+		//rest.Route{"DELETE", "/device/:DeviceId", RemoveDevice}
 	)
 	http.ListenAndServe(":8080", &handler)
 }
@@ -25,7 +25,7 @@ type Device struct {
 	IpAddr          string
 	ListenPort      string
 	DeviceType      string
-	Location        string
+	Devicelocation  string
 	ConnectionLimit string
 	//sensors         []string
 }
@@ -33,7 +33,13 @@ type Device struct {
 var store = map[string]*Device{}
 
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
-
+	DeviceId := r.PathParam("DeviceId")
+	device := store[DeviceId]
+	if device == nil {
+		rest.NotFound(w, r)
+		return
+	}
+	w.WriteJson(&device)
 }
 
 func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
