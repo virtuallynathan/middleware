@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/ant0ine/go-json-rest"
-
+	"fmt"
 	"net/http"
+
+	"github.com/ant0ine/go-json-rest"
 )
 
 func main() {
@@ -63,7 +64,7 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 
 //This function seatches the list of devices and returns the device(s) that are in a specific loation.
 func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
-	location := r.PathParam("DeviceLocation")
+	location := r.PathParam("Location")
 	devices := make([]*Device, len(store))
 	i := 0
 	for _, device := range store {
