@@ -3,6 +3,7 @@ package Consumer;
 import junit.framework.TestCase;
 
 /**Case to test Consumer states
+ *
  */
 public class ConsumerTest extends TestCase {
 	
