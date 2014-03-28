@@ -17,7 +17,7 @@ func main() {
 		rest.Route{"GET", "/device/:DeviceID", GetDeviceById},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
-		//rest.Route{"DELETE", "/device/:DeviceID", RemoveDevice}
+		rest.Route{"DELETE", "/device/:DeviceID", RemoveDevice}
 	)
 	http.ListenAndServe(":8080", &handler)
 }
@@ -116,7 +116,8 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 
 //This function removes a device from the store
 func RemoveDevice(w *rest.ResponseWriter, r *rest.Request) {
-
+	deviceID := r.PathParam("DeviceID")
+	delete(store, deviceID)
 }
 
 //demo code to figure out what i'm doing
