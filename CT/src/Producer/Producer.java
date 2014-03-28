@@ -5,10 +5,9 @@ package Producer;
 public class Producer {
 		
 	//attributes
-	//location representative
 	int location;
-	//connections
 	int connection_limit;
+	String type;
 	//sensors supported
 	boolean accelerometer;
 	boolean gps;
