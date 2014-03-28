@@ -1,9 +1,12 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/ant0ine/go-json-rest"
+	"github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -19,6 +22,17 @@ func main() {
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
 	)
 	http.ListenAndServe(":8080", &handler)
+
+	db, err := sql.Open("mysql", "routerdb:11routerdb22@tcp(infdevdb-ch2-1p.sys.comcast.net:3306)/routerdb")
+	if err != nil {
+		fmt.Printf("error, could not open sql connection")
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		fmt.Printf("error, could not connect to database.")
+	}
 }
 
 //The struct of type Device stores all the information about a single device.
@@ -26,7 +40,6 @@ type Device struct {
 	DeviceID        string
 	IpAddr          string
 	ListenPort      string
-	DeviceType      string
 	Location        string
 	ConnectionLimit string
 	Sensor          string
@@ -94,10 +107,6 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	}
 	if device.ListenPort == "" {
 		rest.Error(w, "device listenPort required", 400)
-		return
-	}
-	if device.DeviceType == "" {
-		rest.Error(w, "device type required", 400)
 		return
 	}
 	if device.Location == "" {
