@@ -1,0 +1,19 @@
+package Consumer;
+
+import junit.framework.TestCase;
+
+public class ConsumerTest extends TestCase {
+	
+	Consumer c = new Consumer();
+	
+	public void testConsumerDefault(){
+		boolean defaultConsumer = false;
+		
+		assertEquals(c.accelerometer, defaultConsumer);
+		assertEquals(c.gps, defaultConsumer);
+		assertEquals(c.gravity, defaultConsumer);
+		assertEquals(c.orientation, defaultConsumer);
+		assertEquals(c.temperature, defaultConsumer);
+	}
+
+}

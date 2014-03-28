@@ -6,7 +6,8 @@ import junit.framework.TestCase;
  *
  */
 public class ProducerTest extends TestCase {
-		
+	
+	RandomProducerData rpd = new RandomProducerData();	
 	Producer p = new Producer();
 	
 	/**Test set default state is correct
