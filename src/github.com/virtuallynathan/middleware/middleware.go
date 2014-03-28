@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/ant0ine/go-json-rest"
@@ -17,7 +16,7 @@ func main() {
 		rest.Route{"GET", "/device/:DeviceID", GetDeviceById},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
-		rest.Route{"DELETE", "/device/:DeviceID", RemoveDevice}
+		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
 	)
 	http.ListenAndServe(":8080", &handler)
 }
@@ -107,6 +106,10 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	}
 	if device.ConnectionLimit == "" {
 		rest.Error(w, "device connectionLimit required", 400)
+		return
+	}
+	if device.Sensor == "" {
+		rest.Error(w, "device sensor required", 400)
 		return
 	}
 	store[device.DeviceID] = &device
