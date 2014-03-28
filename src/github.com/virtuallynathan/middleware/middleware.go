@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/ant0ine/go-json-rest"
+
 	"net/http"
 )
 
@@ -12,29 +13,32 @@ func main() {
 	}
 	handler.SetRoutes(
 		rest.Route{"POST", "/device/add", AddDevice},
-		rest.Route{"GET", "/device/:DeviceId", GetDeviceById},
+		rest.Route{"GET", "/device/:DeviceID", GetDeviceById},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
-		//rest.Route{"POST", "/device/sensor", GetDeviceBySensorType},
-		//rest.Route{"DELETE", "/device/:DeviceId", RemoveDevice}
+		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
+		//rest.Route{"DELETE", "/device/:DeviceID", RemoveDevice}
 	)
 	http.ListenAndServe(":8080", &handler)
 }
 
+//The struct of type Device stores all the information about a single device.
 type Device struct {
-	DeviceId        string
+	DeviceID        string
 	IpAddr          string
 	ListenPort      string
 	DeviceType      string
 	Location        string
 	ConnectionLimit string
-	//sensors         []string
+	Sensor          string
 }
 
+//The store is a map containing structs of type Device.
 var store = map[string]*Device{}
 
+//This function searches the store and returns the device matching the ID provided.
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
-	DeviceId := r.PathParam("DeviceId")
-	device := store[DeviceId]
+	DeviceID := r.PathParam("DeviceID")
+	device := store[DeviceID]
 	if device == nil {
 		rest.NotFound(w, r)
 		return
@@ -42,23 +46,37 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson(&device)
 }
 
+//This function seatches the list of devices and returns the device(s) that have the sensor(s) specified.
 func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
-
-}
-
-func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
-	//location := r.PathParam("DeviceLocation")
+	sensor := r.PathParam("Sensor")
 	devices := make([]*Device, len(store))
 	i := 0
 	for _, device := range store {
-		//if device.Location == location {
-		devices[i] = device
-		//}
-		i++
+		if device.Sensor == sensor {
+			devices[i] = device
+			i++
+		}
+
 	}
 	w.WriteJson(&devices)
 }
 
+//This function seatches the list of devices and returns the device(s) that are in a specific loation.
+func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
+	location := r.PathParam("DeviceLocation")
+	devices := make([]*Device, len(store))
+	i := 0
+	for _, device := range store {
+		if device.Location == location {
+			devices[i] = device
+			i++
+		}
+
+	}
+	w.WriteJson(&devices)
+}
+
+//This function adds a device to the store (soon to be moved to Google Cloud Datastore)
 func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	device := Device{}
 	err := r.DecodeJsonPayload(&device)
@@ -66,7 +84,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if device.DeviceId == "" {
+	if device.DeviceID == "" {
 		rest.Error(w, "device id required", 400)
 		return
 	}
@@ -90,11 +108,12 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device connectionLimit required", 400)
 		return
 	}
-	store[device.DeviceId] = &device
+	store[device.DeviceID] = &device
 	w.WriteJson(&device)
 
 }
 
+//This function removes a device from the store
 func RemoveDevice(w *rest.ResponseWriter, r *rest.Request) {
 
 }
