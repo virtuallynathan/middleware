@@ -21,7 +21,7 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	//Begin database conneciton
-	db, err := sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
+	db, err := sql.Open("mysql", "root:compsci123@tcp(173.194.80.185:3306)/middleware")
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}
