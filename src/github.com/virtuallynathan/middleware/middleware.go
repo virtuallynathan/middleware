@@ -149,7 +149,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	store[device.DeviceID] = &device
 	tmpListenPort, _ := strconv.Atoi(device.ListenPort)
 	tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
-	err = addStmt.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
+	_, err = addStmt.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
 	if err != nil {
 		log.Fatalf("Error running addStmt %s", err.Error())
 	}
