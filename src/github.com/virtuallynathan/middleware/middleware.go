@@ -21,7 +21,7 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	//Begin database conneciton
-	db, err := sql.Open("mysql", "root:compsci123@tcp(173.194.80.185:3306)/middleware")
+	db, err := sql.Open("mysql", "virtuallynathan@cloudsql(component-tech-middleware:db1)/middleware")
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}
@@ -74,6 +74,7 @@ func main() {
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
+		rest.Route("GET", "/health/:check", HealthCheck)
 	)
 	http.ListenAndServe(":8080", &handler)
 
@@ -102,6 +103,10 @@ var (
 
 //The store is a map containing structs of type Device.
 var store = map[string]*Device{}
+
+func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
+	w.WriteJson("OK")
+}
 
 //This function searches the store and returns the device matching the ID provided.
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
