@@ -1,10 +1,8 @@
 
 
-curl -i -d '{"DeviceId":"1231231","IpAddr":"192.168.1.100","ListenPort":"63532","DeviceType":"Smartphone","Location":"St Andrews", "ConnectionLimit":"10","Sensor":"GPS"}' http://127.0.0.1:8080/device/add
+curl -i -d '{"DeviceId":"2222","IPAddr":"192.168.1.123","ListenPort":"3123","Location":"ere", "ConnectionLimit":"12","Sensor":"GPS"}' http://server.nathan.io:8080/device/add
 
-curl -i http://127.0.0.1:8080/device/1231231
+curl -i http://server.nathan.io:8080/device/1231231
 
 curl -i http://127.0.0.1:8080/device/loc/hell
 
-
-curl -i -d '{"id":"1"}' http://127.0.0.1:8080/device
