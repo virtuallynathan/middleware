@@ -17,7 +17,7 @@ var deviceIDStmt *sql.Stmt
 func main() {
 
 	//Begin database conneciton
-	db, err = sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
+	db, err := sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
 	if err != nil {
 		fmt.Printf(err.Error() + "sql Open")
 	}
@@ -29,14 +29,14 @@ func main() {
 	}
 
 	// Prepare statement for inserting data
-	addStmt, err := db.Prepare("INSERT INTO middleware VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	addStmt, err = db.Prepare("INSERT INTO middleware VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		fmt.Printf(err.Error() + "sql insert prepare")
 	}
 	defer addStmt.Close()
 
 	// Prepare statement for reading data
-	deviceIDStmt, err := db.Prepare("SELECT * FROM middleware WHERE DeviceID = ?")
+	deviceIDStmt, err = db.Prepare("SELECT * FROM middleware WHERE DeviceID = ?")
 	if err != nil {
 		fmt.Printf(err.Error() + "sql select prepare")
 	}
