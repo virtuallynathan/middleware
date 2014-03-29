@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"runtime"
@@ -13,6 +12,7 @@ import (
 
 var db *sql.DB
 var addDeviceStmt *sql.Stmt
+var removeDeviceStmt *sql.Stmt
 var deviceIDStmt *sql.Stmt
 var deviceLocationStmt *sql.Stmt
 var deviceSensorStmt *sql.Stmt
@@ -35,16 +35,34 @@ func main() {
 	// Prepare statement for inserting data
 	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
-		fmt.Printf(err.Error() + "sql insert prepare")
+		log.Fatalf(err.Error() + "sql insert addDeviceStmt prepare")
 	}
 	defer addDeviceStmt.Close()
 
 	// Prepare statement for reading data
 	deviceIDStmt, err = db.Prepare("SELECT * FROM devices WHERE DeviceID = ?")
 	if err != nil {
-		fmt.Printf(err.Error() + "sql select prepare")
+		log.Fatalf(err.Error() + "sql select deviceIDStmt prepare")
 	}
 	defer deviceIDStmt.Close()
+
+	deviceLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Location = ?")
+	if err != nil {
+		log.Fatalf(err.Error() + "sql select deviceLocationStmt prepare")
+	}
+	defer deviceLocationStmt.Close()
+
+	deviceSensorStmt, err = db.Prepare("SELECT * FROM devices WHERE Sensor = ?")
+	if err != nil {
+		log.Fatalf(err.Error() + "sql select deviceSensorStmt prepare")
+	}
+	defer deviceSensorStmt.Close()
+
+	removeDeviceStmt, err = db.Prepare("DELETE FROM devices WHERE DeviceID = ?")
+	if err != nil {
+		log.Fatalf(err.Error() + "sql select removeDeviceStmt prepare")
+	}
+	defer removeDeviceStmt.Close()
 
 	//Begin HTTP handling
 	handler := rest.ResourceHandler{
@@ -71,6 +89,7 @@ type Device struct {
 	Sensor          string
 }
 
+//temporary assignment variables
 var (
 	ID              string
 	DeviceID        string
@@ -86,20 +105,20 @@ var store = map[string]*Device{}
 
 //This function searches the store and returns the device matching the ID provided.
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
-	DeviceID := r.PathParam("DeviceID")
+	deviceID := r.PathParam("DeviceID")
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	device := Device{}
-	rows, err := deviceIDStmt.Query(DeviceID)
+	rows, err := deviceIDStmt.Query(deviceID)
 	if err != nil {
-		log.Fatalf("Error running DeviceID query %s", err.Error())
+		log.Fatalf("Error running deviceIDStmt %s", err.Error())
 	}
 	i := 0
 	for rows.Next() {
 		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
 		if err != nil {
-			log.Fatalf("Error scanning rows %s", err.Error())
+			log.Fatalf("Error scanning rows deviceIDStmt %s", err.Error())
 		}
-		device.DeviceID = DeviceID
+		device.DeviceID = deviceID
 		device.IPAddr = IPAddr
 		device.ListenPort = ListenPort
 		device.Location = Location
@@ -116,14 +135,27 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 //This function seatches the list of devices and returns the device(s) that have the sensor(s) specified.
 func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 	sensor := r.PathParam("Sensor")
-	devices := make([]*Device, len(store))
+	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
+	device := Device{}
+	rows, err := deviceSensorStmt.Query(sensor)
+	if err != nil {
+		log.Fatalf("Error running deviceSensorStmt %s", err.Error())
+	}
 	i := 0
-	for _, device := range store {
-		if device.Sensor == sensor {
-			devices[i] = device
-			i++
+	for rows.Next() {
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
+		if err != nil {
+			log.Fatalf("Error scanning rows deviceSensorStmt %s", err.Error())
 		}
+		device.DeviceID = DeviceID
+		device.IPAddr = IPAddr
+		device.ListenPort = ListenPort
+		device.Location = Location
+		device.ConnectionLimit = ConnectionLimit
+		device.Sensor = Sensor
+		devices[i] = &device
 
+		i++
 	}
 	w.WriteJson(&devices)
 }
@@ -131,17 +163,29 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 //This function seatches the list of devices and returns the device(s) that are in a specific loation.
 func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	location := r.PathParam("Location")
-	devices := make([]*Device, len(store))
+	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
+	device := Device{}
+	rows, err := deviceLocationStmt.Query(location)
+	if err != nil {
+		log.Fatalf("Error running deviceLocationStmt %s", err.Error())
+	}
 	i := 0
-	for _, device := range store {
-		if device.Location == location {
-			devices[i] = device
-			i++
+	for rows.Next() {
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
+		if err != nil {
+			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
 		}
+		device.DeviceID = DeviceID
+		device.IPAddr = IPAddr
+		device.ListenPort = ListenPort
+		device.Location = Location
+		device.ConnectionLimit = ConnectionLimit
+		device.Sensor = Sensor
+		devices[i] = &device
 
+		i++
 	}
 	w.WriteJson(&devices)
-}
 
 //This function adds a device to the store (soon to be moved to Google Cloud Datastore)
 func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
@@ -187,5 +231,8 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 //This function removes a device from the store
 func RemoveDevice(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	delete(store, deviceID)
+	_, err := removeDeviceStmt.Exec(deviceID)
+	if err != nil {
+		log.Fatalf("Error running removeDeviceStmt %s", err.Error())
+	}
 }
