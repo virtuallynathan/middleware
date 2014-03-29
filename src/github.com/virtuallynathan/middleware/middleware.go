@@ -6,15 +6,16 @@ import (
 	"log"
 	"net/http"
 	"runtime"
-	"strconv"
 
 	"github.com/ant0ine/go-json-rest"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB
-var addStmt *sql.Stmt
+var addDeviceStmt *sql.Stmt
 var deviceIDStmt *sql.Stmt
+var deviceLocationStmt *sql.Stmt
+var deviceSensorStmt *sql.Stmt
 
 func main() {
 
@@ -32,11 +33,11 @@ func main() {
 	}
 
 	// Prepare statement for inserting data
-	addStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		fmt.Printf(err.Error() + "sql insert prepare")
 	}
-	defer addStmt.Close()
+	defer addDeviceStmt.Close()
 
 	// Prepare statement for reading data
 	deviceIDStmt, err = db.Prepare("SELECT * FROM devices WHERE DeviceID = ?")
@@ -76,11 +77,23 @@ var store = map[string]*Device{}
 //This function searches the store and returns the device matching the ID provided.
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 	DeviceID := r.PathParam("DeviceID")
-	device := store[DeviceID]
+	device := Device{}
+	rows, err := db.Query("SELECT * FROM devices WHERE DeviceID = ?", DeviceID)
+	if err != nil {
+		log.Fatalf("Error running DeviceID query %s", err.Error())
+	}
+	for rows.Next() {
+		err := rows.Scan(&device.DeviceID, &device.IPAddr, &device.ListenPort, &device.Location, &device.ConnectionLimit, &device.Sensor)
+		if err != nil {
+			log.Fatalf("Error scanning rows %s", err.Error())
+		}
+	}
+	/*device := store[DeviceID]
 	if device == nil {
 		rest.NotFound(w, r)
 		return
 	}
+	*/
 	w.WriteJson(&device)
 }
 
@@ -146,12 +159,9 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device Sensor required", 400)
 		return
 	}
-	store[device.DeviceID] = &device
-	tmpListenPort, _ := strconv.Atoi(device.ListenPort)
-	tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
-	_, err = addStmt.Exec(0, device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
+	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Sensor)
 	if err != nil {
-		log.Fatalf("Error running addStmt %s", err.Error())
+		log.Fatalf("Error running addDeviceStmt %s", err.Error())
 	}
 
 	w.WriteJson(&device)
