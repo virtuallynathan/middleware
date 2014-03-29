@@ -37,16 +37,12 @@ func main() {
 
 //The struct of type Device stores all the information about a single device.
 type Device struct {
-	DeviceID          string
-	IpAddr            string
-	ListenPort        string
-	Location          string
-	ConnectionLimit   string
-	Accelerometer     string
-	GPS               string
-	TemperatureSensor string
-	LightSensor       string
-	OtherSensor       string
+	DeviceID        string
+	IPAddr          string
+	ListenPort      string
+	Location        string
+	ConnectionLimit string
+	Sensor          string
 }
 
 //The store is a map containing structs of type Device.
@@ -105,40 +101,24 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device id required", 400)
 		return
 	}
-	if device.IpAddr == "" {
-		rest.Error(w, "device ipAddr required", 400)
+	if device.IPAddr == "" {
+		rest.Error(w, "device IPAddr required", 400)
 		return
 	}
 	if device.ListenPort == "" {
-		rest.Error(w, "device listenPort required", 400)
+		rest.Error(w, "device ListenPort required", 400)
 		return
 	}
 	if device.Location == "" {
-		rest.Error(w, "device location required", 400)
+		rest.Error(w, "device Location required", 400)
 		return
 	}
 	if device.ConnectionLimit == "" {
-		rest.Error(w, "device connectionLimit required", 400)
+		rest.Error(w, "device ConnectionLimit required", 400)
 		return
 	}
-	if device.Accelerometer != "true" || device.Accelerometer != "false" {
-		rest.Error(w, "Accelerometer must be true or false, and is required", 400)
-		return
-	}
-	if device.GPS != "true" || device.GPS != "false" {
-		rest.Error(w, "GPS must be true or false, and is required", 400)
-		return
-	}
-	if device.TemperatureSensor != "true" || device.TemperatureSensor != "false" {
-		rest.Error(w, "TemperatureSensor must be true or false, and is required", 400)
-		return
-	}
-	if device.LightSensor != "true" || device.LightSensor != "false" {
-		rest.Error(w, "LightSensor must be true or false, and is required", 400)
-		return
-	}
-	if device.OtherSensor != "true" || device.OtherSensor != "false" {
-		rest.Error(w, "OtherSensor must be true or false, and is required", 400)
+	if device.Sensor == "" {
+		rest.Error(w, "device Sensor required", 400)
 		return
 	}
 	store[device.DeviceID] = &device
