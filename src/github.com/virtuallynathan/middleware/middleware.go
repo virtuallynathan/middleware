@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"runtime"
-	//"strconv"
+	"strconv"
 
 	"github.com/ant0ine/go-json-rest"
 	_ "github.com/go-sql-driver/mysql"
@@ -147,9 +147,9 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	store[device.DeviceID] = &device
-	//tmpListenPort, _ := strconv.Atoi(device.ListenPort)
-	//tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
-	_, err = addStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Sensor)
+	tmpListenPort, _ := strconv.Atoi(device.ListenPort)
+	tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
+	_, err = addStmt.Exec(0, device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
 	if err != nil {
 		log.Fatalf("Error running addStmt %s", err.Error())
 	}
