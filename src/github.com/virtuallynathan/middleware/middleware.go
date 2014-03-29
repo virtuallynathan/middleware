@@ -112,6 +112,7 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Fatalf("Error running deviceIDStmt %s", err.Error())
 	}
+	//TODO: put this shit in a function, DRY.
 	i := 0
 	for rows.Next() {
 		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
@@ -141,6 +142,8 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Fatalf("Error running deviceSensorStmt %s", err.Error())
 	}
+
+	//TODO: put this shit in a function, DRY.
 	i := 0
 	for rows.Next() {
 		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
@@ -169,6 +172,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Fatalf("Error running deviceLocationStmt %s", err.Error())
 	}
+	//TODO: put this shit in a function, DRY.
 	i := 0
 	for rows.Next() {
 		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
