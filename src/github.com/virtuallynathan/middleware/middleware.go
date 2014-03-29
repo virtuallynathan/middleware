@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// Prepare statement for inserting data
-	addStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	addStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		fmt.Printf(err.Error() + "sql insert prepare")
 	}
