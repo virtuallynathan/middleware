@@ -27,7 +27,6 @@ public class ProducerRegister {
 		try{		
 			// Request parameters and other properties.
 			List <NameValuePair> params = new ArrayList<NameValuePair>(2);
-			params.add(new BasicNameValuePair("DeviceId", "lala"));//will be removed tomorrow
 			params.add(new BasicNameValuePair("IPAddr", "192.168.1.123"));
 			params.add(new BasicNameValuePair("ListenPort", "3132"));
 			params.add(new BasicNameValuePair("Location", "2"));
@@ -42,8 +41,7 @@ public class ProducerRegister {
 			if (entity != null) {
 			    InputStream instream = entity.getContent();
 			    try {
-			        System.out.println(params.toString());
-			        System.out.println(response.toString());
+			        System.out.println("here");
 			    } finally {
 			        instream.close();
 			    }
