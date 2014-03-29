@@ -74,7 +74,7 @@ func main() {
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
-		rest.Route("GET", "/health/:check", HealthCheck)
+		rest.Route{"GET", "/health/:check", HealthCheck},
 	)
 	http.ListenAndServe(":8080", &handler)
 
