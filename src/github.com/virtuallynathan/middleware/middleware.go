@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"runtime"
 	"strconv"
 
 	"github.com/ant0ine/go-json-rest"
@@ -148,7 +149,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	store[device.DeviceID] = &device
 	tmpListenPort, _ := strconv.Atoi(device.ListenPort)
 	tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
-	err := addStmt.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
+	err = addStmt.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
 	if err != nil {
 		log.Fatalf("Error running addStmt %s", err.Error())
 	}
