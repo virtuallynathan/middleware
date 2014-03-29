@@ -1,0 +1,23 @@
+package Producer;
+
+import org.apache.http.*;
+
+
+public class ProducerRegister {
+	
+	/**Initial Registration of a Producer with the database.
+	 * Using API method POST device/add
+	 */
+	public void registerProducer(Producer p){
+			
+		HttpClient hc = new DefaultHttpClient();
+	}
+	
+	/**Method to send heartbeat to the register
+	 * @param p
+	 */
+	public void producerHeartBeat(Producer p){
+		
+	}
+
+}

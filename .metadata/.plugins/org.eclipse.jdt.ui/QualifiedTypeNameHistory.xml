@@ -2,4 +2,5 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="Consumer.RandomConsumerData"/>
 <fullyQualifiedTypeName name="java.net.HttpRetryException"/>
+<fullyQualifiedTypeName name="java.io.DataOutputStream"/>
 </qualifiedTypeNameHistroy>
