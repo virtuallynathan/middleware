@@ -23,7 +23,7 @@ func main() {
 	)
 	http.ListenAndServe(":8080", &handler)
 
-	db, err := sql.Open("mysql", "routerdb:11routerdb22@tcp(infdevdb-ch2-1p.sys.comcast.net:3306)/routerdb")
+	db, err := sql.Open("mysql", "root:compmgmt123@tcp(server.nathan.io:3306)/middleware")
 	if err != nil {
 		fmt.Printf("error, could not open sql connection")
 	}
@@ -37,12 +37,16 @@ func main() {
 
 //The struct of type Device stores all the information about a single device.
 type Device struct {
-	DeviceID        string
-	IpAddr          string
-	ListenPort      string
-	Location        string
-	ConnectionLimit string
-	Sensor          string
+	DeviceID          string
+	IpAddr            string
+	ListenPort        string
+	Location          string
+	ConnectionLimit   string
+	Accelerometer     string
+	GPS               string
+	TemperatureSensor string
+	LightSensor       string
+	OtherSensor       string
 }
 
 //The store is a map containing structs of type Device.
@@ -117,8 +121,24 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device connectionLimit required", 400)
 		return
 	}
-	if device.Sensor == "" {
-		rest.Error(w, "device sensor required", 400)
+	if device.Accelerometer != "true" || device.Accelerometer != "false" {
+		rest.Error(w, "Accelerometer must be true or false, and is required", 400)
+		return
+	}
+	if device.GPS != "true" || device.GPS != "false" {
+		rest.Error(w, "GPS must be true or false, and is required", 400)
+		return
+	}
+	if device.TemperatureSensor != "true" || device.TemperatureSensor != "false" {
+		rest.Error(w, "TemperatureSensor must be true or false, and is required", 400)
+		return
+	}
+	if device.LightSensor != "true" || device.LightSensor != "false" {
+		rest.Error(w, "LightSensor must be true or false, and is required", 400)
+		return
+	}
+	if device.OtherSensor != "true" || device.OtherSensor != "false" {
+		rest.Error(w, "OtherSensor must be true or false, and is required", 400)
 		return
 	}
 	store[device.DeviceID] = &device
