@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -16,16 +17,17 @@ var deviceIDStmt *sql.Stmt
 
 func main() {
 
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	//Begin database conneciton
 	db, err := sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
 	if err != nil {
-		fmt.Printf(err.Error() + "sql Open")
+		log.Fatalf("Error opening database: %v", err)
 	}
 	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		fmt.Printf(err.Error() + "sql Ping")
+		log.Fatalf("Error connecting to database: %v", err)
 	}
 
 	// Prepare statement for inserting data
@@ -146,7 +148,10 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	store[device.DeviceID] = &device
 	tmpListenPort, _ := strconv.Atoi(device.ListenPort)
 	tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
-	err = addStmt.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
+	err := addStmt.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
+	if err != nil {
+		log.Fatalf("Error running addStmt %s", err.Error())
+	}
 
 	w.WriteJson(&device)
 
