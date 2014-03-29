@@ -23,7 +23,7 @@ func main() {
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
 	)
 	http.ListenAndServe(":8080", &handler)
-	go ConnectToDatabase()
+	//go ConnectToDatabase()
 
 }
 
