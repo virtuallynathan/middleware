@@ -105,7 +105,7 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
 		device.Sensor = Sensor
-		devices[i] = device
+		devices[i] = &device
 
 		i++
 	}
