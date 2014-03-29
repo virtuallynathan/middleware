@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/ant0ine/go-json-rest"
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
