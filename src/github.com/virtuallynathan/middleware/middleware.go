@@ -34,7 +34,7 @@ func main() {
 	// Prepare statement for reading data
 	stmtOut, err := db.Prepare("SELECT * FROM middleware WHERE DeviceID = ?")
 	if err != nil {
-		mt.Printf(err.Error() + "sql select prepare")
+		fmt.Printf(err.Error() + "sql select prepare")
 	}
 	defer stmtOut.Close()
 
@@ -43,7 +43,7 @@ func main() {
 		EnableRelaxedContentType: true,
 	}
 	handler.SetRoutes(
-		rest.Route{"POST", "/device/add", AddDevice},
+		rest.Route{"POST", "/device/add", AddDevice(stmtIns)},
 		rest.Route{"GET", "/device/:DeviceID", GetDeviceById},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
@@ -108,7 +108,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 }
 
 //This function adds a device to the store (soon to be moved to Google Cloud Datastore)
-func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
+func AddDevice(w *rest.ResponseWriter, r *rest.Request, stmtIns *Stmt) {
 	device := Device{}
 	err := r.DecodeJsonPayload(&device)
 	if err != nil {
