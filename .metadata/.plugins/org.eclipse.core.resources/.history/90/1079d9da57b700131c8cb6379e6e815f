@@ -40,10 +40,4 @@ public class ProducerTest extends TestCase {
 		assertEquals(p.temperature, false); 
 	}
 	
-	public void testProducerRegistration(){
-		
-		ProducerRegister pr = new ProducerRegister();
-		pr.registerProducer(p);
-	}
-	
 }
