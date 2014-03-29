@@ -11,6 +11,18 @@ import (
 
 func main() {
 
+	//Begin database conneciton
+	db, err := sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
+	if err != nil {
+		fmt.Printf("error, could not open sql connection")
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		fmt.Printf("error, could not connect to database.")
+	}
+
 	//Begin HTTP handling
 	handler := rest.ResourceHandler{
 		EnableRelaxedContentType: true,
@@ -23,22 +35,7 @@ func main() {
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
 	)
 	http.ListenAndServe(":8080", &handler)
-	//go ConnectToDatabase()
 
-}
-
-func ConnectToDatabase() {
-	//Begin database conneciton setup
-	db, err := sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
-	if err != nil {
-		fmt.Printf("error, could not open sql connection")
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		fmt.Printf("error, could not connect to database.")
-	}
 }
 
 //The struct of type Device stores all the information about a single device.
