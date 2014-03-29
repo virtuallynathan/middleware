@@ -10,10 +10,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var db *sql.DB
+var addStmt *sql.Stmt
+var deviceIDStmt *sql.Stmt
+
 func main() {
 
 	//Begin database conneciton
-	db, err := sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
+	db, err = sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
 	if err != nil {
 		fmt.Printf(err.Error() + "sql Open")
 	}
@@ -25,25 +29,25 @@ func main() {
 	}
 
 	// Prepare statement for inserting data
-	stmtIns, err := db.Prepare("INSERT INTO middleware VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	addStmt, err := db.Prepare("INSERT INTO middleware VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		fmt.Printf(err.Error() + "sql insert prepare")
 	}
-	defer stmtIns.Close()
+	defer addStmt.Close()
 
 	// Prepare statement for reading data
-	stmtOut, err := db.Prepare("SELECT * FROM middleware WHERE DeviceID = ?")
+	deviceIDStmt, err := db.Prepare("SELECT * FROM middleware WHERE DeviceID = ?")
 	if err != nil {
 		fmt.Printf(err.Error() + "sql select prepare")
 	}
-	defer stmtOut.Close()
+	defer deviceIDStmt.Close()
 
 	//Begin HTTP handling
 	handler := rest.ResourceHandler{
 		EnableRelaxedContentType: true,
 	}
 	handler.SetRoutes(
-		rest.Route{"POST", "/device/add", AddDevice(stmtIns)},
+		rest.Route{"POST", "/device/add", AddDevice},
 		rest.Route{"GET", "/device/:DeviceID", GetDeviceById},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
@@ -108,7 +112,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 }
 
 //This function adds a device to the store (soon to be moved to Google Cloud Datastore)
-func AddDevice(w *rest.ResponseWriter, r *rest.Request, stmtIns *Stmt) {
+func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	device := Device{}
 	err := r.DecodeJsonPayload(&device)
 	if err != nil {
@@ -142,7 +146,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request, stmtIns *Stmt) {
 	store[device.DeviceID] = &device
 	tmpListenPort, _ := strconv.Atoi(device.ListenPort)
 	tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
-	err = stmtIns.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
+	err = addStmt.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
 
 	w.WriteJson(&device)
 
