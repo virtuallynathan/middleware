@@ -32,14 +32,14 @@ func main() {
 	}
 
 	// Prepare statement for inserting data
-	addStmt, err = db.Prepare("INSERT INTO middleware VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	addStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		fmt.Printf(err.Error() + "sql insert prepare")
 	}
 	defer addStmt.Close()
 
 	// Prepare statement for reading data
-	deviceIDStmt, err = db.Prepare("SELECT * FROM middleware WHERE DeviceID = ?")
+	deviceIDStmt, err = db.Prepare("SELECT * FROM devices WHERE DeviceID = ?")
 	if err != nil {
 		fmt.Printf(err.Error() + "sql select prepare")
 	}
