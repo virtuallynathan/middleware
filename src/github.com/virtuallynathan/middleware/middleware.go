@@ -87,7 +87,7 @@ var store = map[string]*Device{}
 //This function searches the store and returns the device matching the ID provided.
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 	DeviceID := r.PathParam("DeviceID")
-	devices := []*Device
+	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	device := Device{}
 	rows, err := deviceIDStmt.Query(DeviceID)
 	if err != nil {
@@ -109,12 +109,6 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 
 		i++
 	}
-	/*device := store[DeviceID]
-	if device == nil {
-		rest.NotFound(w, r)
-		return
-	}
-	*/
 	w.WriteJson(&devices)
 
 }
