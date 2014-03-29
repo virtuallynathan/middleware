@@ -87,12 +87,13 @@ var store = map[string]*Device{}
 //This function searches the store and returns the device matching the ID provided.
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 	DeviceID := r.PathParam("DeviceID")
+	devices := make([]*Device, len(store))
 	device := Device{}
 	rows, err := deviceIDStmt.Query(DeviceID)
 	if err != nil {
 		log.Fatalf("Error running DeviceID query %s", err.Error())
 	}
-
+	i := 0
 	for rows.Next() {
 		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
 		if err != nil {
@@ -106,7 +107,8 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
 		device.Sensor = Sensor
-
+		i++
+		devices[i] = device
 	}
 	/*device := store[DeviceID]
 	if device == nil {
@@ -114,7 +116,8 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	*/
-	w.WriteJson(&device)
+	w.WriteJson(&devices)
+
 }
 
 //This function seatches the list of devices and returns the device(s) that have the sensor(s) specified.
