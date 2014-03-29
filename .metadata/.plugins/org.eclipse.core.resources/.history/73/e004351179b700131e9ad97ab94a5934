@@ -39,7 +39,7 @@ public class ProducerRegister {
 			
 			StringEntity params = new StringEntity("{\"DeviceId\":\"myname\",\"IPAddr\":\"192.168.1.123\",\"ListenPort\":\"3123\",\"Location\":\"ere\", \"ConnectionLimit\":\"12\",\"Sensor\":\"GPS\"}");
 					
-			//httppost.addHeader("content-type", "application/x-www-form-urlencoded");
+			httppost.addHeader("content-type", "application/x-www-form-urlencoded");
 	        httppost.setEntity(params);		
 					
 			

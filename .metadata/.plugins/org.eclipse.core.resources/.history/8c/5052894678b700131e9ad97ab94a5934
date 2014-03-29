@@ -10,7 +10,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -27,22 +26,14 @@ public class ProducerRegister {
 		
 		try{		
 			// Request parameters and other properties.
-//			List <NameValuePair> params = new ArrayList<NameValuePair>(2);
-//			params.add(new BasicNameValuePair("DeviceId", "lala"));//will be removed tomorrow
-//			params.add(new BasicNameValuePair("IPAddr", "192.168.1.123"));
-//			params.add(new BasicNameValuePair("ListenPort", "3132"));
-//			params.add(new BasicNameValuePair("Location", "2"));
-//			params.add(new BasicNameValuePair("ConnectionLimit", "10"));
-//			params.add(new BasicNameValuePair("Sensor", "gps"));
-			
-			//httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-			
-			StringEntity params = new StringEntity("{\"DeviceId\":\"myname\",\"IPAddr\":\"192.168.1.123\",\"ListenPort\":\"3123\",\"Location\":\"ere\", \"ConnectionLimit\":\"12\",\"Sensor\":\"GPS\"}");
-					
-			//httppost.addHeader("content-type", "application/x-www-form-urlencoded");
-	        httppost.setEntity(params);		
-					
-			
+			List <NameValuePair> params = new ArrayList<NameValuePair>(2);
+			params.add(new BasicNameValuePair("DeviceId", "lala"));//will be removed tomorrow
+			params.add(new BasicNameValuePair("IPAddr", "192.168.1.123"));
+			params.add(new BasicNameValuePair("ListenPort", "3132"));
+			params.add(new BasicNameValuePair("Location", "2"));
+			params.add(new BasicNameValuePair("ConnectionLimit", "10"));
+			params.add(new BasicNameValuePair("Sensor", "gps"));
+			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 	
 			//Execute and get the response.
 			HttpResponse response = hc.execute(httppost);

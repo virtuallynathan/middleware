@@ -35,14 +35,13 @@ public class ProducerRegister {
 //			params.add(new BasicNameValuePair("ConnectionLimit", "10"));
 //			params.add(new BasicNameValuePair("Sensor", "gps"));
 			
-			//httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+			
 			
 			StringEntity params = new StringEntity("{\"DeviceId\":\"myname\",\"IPAddr\":\"192.168.1.123\",\"ListenPort\":\"3123\",\"Location\":\"ere\", \"ConnectionLimit\":\"12\",\"Sensor\":\"GPS\"}");
 					
-			//httppost.addHeader("content-type", "application/x-www-form-urlencoded");
-	        httppost.setEntity(params);		
 					
-			
+					
+			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 	
 			//Execute and get the response.
 			HttpResponse response = hc.execute(httppost);
