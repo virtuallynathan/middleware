@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/ant0ine/go-json-rest"
 	_ "github.com/go-sql-driver/mysql"
@@ -14,14 +15,28 @@ func main() {
 	//Begin database conneciton
 	db, err := sql.Open("mysql", "root:compmgmt123@tcp(127.0.0.1:3306)/middleware")
 	if err != nil {
-		fmt.Printf("error, could not open sql connection")
+		fmt.Printf(err.Error() + "sql Open")
 	}
 	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		fmt.Printf("error, could not connect to database.")
+		fmt.Printf(err.Error() + "sql Ping")
 	}
+
+	// Prepare statement for inserting data
+	stmtIns, err := db.Prepare("INSERT INTO middleware VALUES( ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	if err != nil {
+		fmt.Printf(err.Error() + "sql insert prepare")
+	}
+	defer stmtIns.Close()
+
+	// Prepare statement for reading data
+	stmtOut, err := db.Prepare("SELECT * FROM middleware WHERE DeviceID = ?")
+	if err != nil {
+		mt.Printf(err.Error() + "sql select prepare")
+	}
+	defer stmtOut.Close()
 
 	//Begin HTTP handling
 	handler := rest.ResourceHandler{
@@ -125,6 +140,10 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	store[device.DeviceID] = &device
+	tmpListenPort, _ := strconv.Atoi(device.ListenPort)
+	tmpConnectionLimit, _ := strconv.Atoi(device.ConnectionLimit)
+	err = stmtIns.Exec(device.DeviceID, device.IPAddr, tmpListenPort, device.Location, tmpConnectionLimit, device.Sensor)
+
 	w.WriteJson(&device)
 
 }
