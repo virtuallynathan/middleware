@@ -87,10 +87,8 @@ var store = map[string]*Device{}
 //This function searches the store and returns the device matching the ID provided.
 func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 	DeviceID := r.PathParam("DeviceID")
-	fmt.Printf("Line 90\n")
 	//device := Device{}
-	rows, err := db.Query("SELECT * FROM devices WHERE DeviceID = ?", DeviceID)
-	fmt.Printf("Line 93\n")
+	rows, err := deviceIDStmt.Query(DeviceID)
 	if err != nil {
 		log.Fatalf("Error running DeviceID query %s", err.Error())
 	}
@@ -103,7 +101,6 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 		fmt.Printf("%d: %s \n", i, columns[i])
 	}
 
-	fmt.Printf("line 106\n")
 	for rows.Next() {
 		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
 		if err != nil {
