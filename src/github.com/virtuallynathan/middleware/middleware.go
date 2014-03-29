@@ -186,6 +186,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 		i++
 	}
 	w.WriteJson(&devices)
+}
 
 //This function adds a device to the store (soon to be moved to Google Cloud Datastore)
 func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
