@@ -99,8 +99,6 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 		if err != nil {
 			log.Fatalf("Error scanning rows %s", err.Error())
 		}
-		fmt.Printf("%s, %s, %s, %s, %s, %s, %s \n", ID, DeviceID, IPAddr, ListenPort, Location, ConnectionLimit, Sensor)
-
 		device.DeviceID = DeviceID
 		device.IPAddr = IPAddr
 		device.ListenPort = ListenPort
