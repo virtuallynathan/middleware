@@ -71,6 +71,16 @@ type Device struct {
 	Sensor          string
 }
 
+var (
+	ID              string
+	DeviceID        string
+	IPAddr          string
+	ListenPort      string
+	Location        string
+	ConnectionLimit string
+	Sensor          string
+)
+
 //The store is a map containing structs of type Device.
 var store = map[string]*Device{}
 
@@ -83,10 +93,16 @@ func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
 		log.Fatalf("Error running DeviceID query %s", err.Error())
 	}
 	for rows.Next() {
-		err := rows.Scan(&device.DeviceID, &device.IPAddr, &device.ListenPort, &device.Location, &device.ConnectionLimit, &device.Sensor)
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
 		if err != nil {
 			log.Fatalf("Error scanning rows %s", err.Error())
 		}
+		device.DeviceID = DeviceID
+		device.IPAddr = IPAddr
+		device.ListenPort = ListenPort
+		device.Location = Location
+		device.ConnectionLimit = ConnectionLimit
+		device.Sensor = Sensor
 	}
 	/*device := store[DeviceID]
 	if device == nil {
