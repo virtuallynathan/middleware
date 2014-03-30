@@ -126,7 +126,12 @@ var (
 	ListenPort      string
 	Location        string
 	ConnectionLimit string
-	Sensor          string
+	Accelerometer   string
+	GPS             string
+	Light           string
+	Temperature     string
+	Orientation     string
+}
 )
 
 //The store is a map containing structs of type Device.
