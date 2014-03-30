@@ -37,7 +37,7 @@ func main() {
 	}
 
 	// Prepare statement for inserting data
-	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		log.Fatalf(err.Error() + "sql insert addDeviceStmt prepare")
 	}
@@ -62,7 +62,7 @@ func main() {
 	}
 	defer deviceSensorStmt.Close()
 
-	DeviceBySensorAndLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Sensor = ? AND Location = ?")
+	DeviceBySensorAndLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Accelerometer = ? AND Location = ?")
 	if err != nil {
 		log.Fatalf(err.Error() + "sql select DeviceBySensorAndLocationStmt prepare")
 	}
