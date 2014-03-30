@@ -19,6 +19,7 @@ var removeDeviceStmt *sql.Stmt
 var deviceIDStmt *sql.Stmt
 var deviceLocationStmt *sql.Stmt
 var deviceSensorStmt *sql.Stmt
+var DeviceBySensorAndLocationStmt *sql.Stmt
 
 func main() {
 
@@ -61,6 +62,12 @@ func main() {
 	}
 	defer deviceSensorStmt.Close()
 
+	DeviceBySensorAndLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Sensor = ? AND Location = ?")
+	if err != nil {
+		log.Fatalf(err.Error() + "sql select DeviceBySensorAndLocationStmt prepare")
+	}
+	defer DeviceBySensorAndLocationStmt.Close()
+
 	removeDeviceStmt, err = db.Prepare("DELETE FROM devices WHERE DeviceID = ?")
 	if err != nil {
 		log.Fatalf(err.Error() + "sql select removeDeviceStmt prepare")
@@ -73,9 +80,10 @@ func main() {
 	}
 	handler.SetRoutes(
 		rest.Route{"POST", "/device/add", AddDevice},
-		rest.Route{"GET", "/device/:DeviceID", GetDeviceById},
+		rest.Route{"GET", "/device/:DeviceID", GetDeviceByID},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"GET", "/device/sensor/:Sensor", GetDeviceBySensorType},
+		rest.Route{"POST", "/device/sensor_location", GetDeviceBySensorAndLocation},
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
 		rest.Route{"GET", "/health/:check", HealthCheck},
 	)
@@ -91,6 +99,11 @@ type Device struct {
 	Location        string
 	ConnectionLimit string
 	Sensor          string
+}
+
+type SensorLocationQuery struct {
+	Sensor   string
+	Location string
 }
 
 //temporary assignment variables
@@ -112,7 +125,7 @@ func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
 }
 
 //This function searches the store and returns the device matching the ID provided.
-func GetDeviceById(w *rest.ResponseWriter, r *rest.Request) {
+func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	device := Device{}
@@ -169,6 +182,51 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 		i++
 	}
 	w.WriteJson(&devices)
+}
+
+//This function adds a device to the store (soon to be moved to Google Cloud Datastore)
+func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
+	SensorLocationQuery := SensorLocationQuery{}
+	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
+	device := Device{}
+	err := r.DecodeJsonPayload(&SensorLocationQuery)
+	if err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if SensorLocationQuery.Location == "" {
+		rest.Error(w, "device query Location required", 400)
+		return
+	}
+	if SensorLocationQuery.Sensor == "" {
+		rest.Error(w, "device query Sensor required", 400)
+		return
+	}
+	rows, err := DeviceBySensorAndLocationStmt.Query(SensorLocationQuery.Sensor, SensorLocationQuery.Location)
+	if err != nil {
+		log.Fatalf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
+	}
+
+	//TODO: put this shit in a function, DRY.
+	i := 0
+	for rows.Next() {
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Sensor)
+		if err != nil {
+			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
+		}
+		device.DeviceID = DeviceID
+		device.IPAddr = IPAddr
+		device.ListenPort = ListenPort
+		device.Location = Location
+		device.ConnectionLimit = ConnectionLimit
+		device.Sensor = Sensor
+		devices[i] = &device
+
+		i++
+	}
+
+	w.WriteJson(&devices)
+
 }
 
 //This function seatches the list of devices and returns the device(s) that are in a specific loation.
