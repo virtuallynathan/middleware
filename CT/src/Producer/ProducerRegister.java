@@ -9,7 +9,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 
-
 public class ProducerRegister {
 	
 	/**Initial Registration of a Producer with the database.
@@ -20,10 +19,10 @@ public class ProducerRegister {
 		HttpClient hc = HttpClients.createDefault();
 		HttpPost httppost = new HttpPost("http://middleware.nathan.io:8080/device/add");
 		
-		try{
+		try{		
+			
 			//set parameters as JSON
-			StringEntity params = new StringEntity("{\"DeviceId\":\"myname\",\"IPAddr\":\"192.168.1.123\",\"ListenPort\""
-				+ ":\"3123\",\"Location\":\"ere\", \"ConnectionLimit\":\"12\",\"Sensor\":\"GPS\"}");
+			StringEntity params = new StringEntity(p.createJsonNoId());
 	        httppost.setEntity(params);	
 			//Execute and get the response.
 			HttpResponse response = hc.execute(httppost);
