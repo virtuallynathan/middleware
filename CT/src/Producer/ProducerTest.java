@@ -31,7 +31,7 @@ public class ProducerTest extends TestCase {
 		assertEquals(d.connection_limit,0);
 		assertEquals(d.accelerometer, defaultSensor);
 		assertEquals(d.gps, defaultSensor);
-		assertEquals(d.gravity, defaultSensor);
+		assertEquals(d.light, defaultSensor);
 		assertEquals(d.orientation, defaultSensor);
 		assertEquals(d.temperature, defaultSensor);
 	}
@@ -51,7 +51,7 @@ public class ProducerTest extends TestCase {
 		assertEquals(p.port, "12323");
 		assertEquals(p.accelerometer, false);
 		assertEquals(p.gps, false);
-		assertEquals(p.gravity, true);
+		assertEquals(p.light, true);
 		assertEquals(p.orientation, true);
 		assertEquals(p.temperature, false); 
 		

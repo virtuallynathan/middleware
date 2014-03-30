@@ -50,7 +50,7 @@ public class RandomProducerData {
 		Random rand = new Random();
 		p.accelerometer = rand.nextBoolean();
 		p.gps = rand.nextBoolean();
-		p.gravity = rand.nextBoolean();
+		p.light = rand.nextBoolean();
 		p.temperature = rand.nextBoolean();
 		p.orientation = rand.nextBoolean();		
 		return p;
