@@ -28,9 +28,7 @@ public class ProducerRegister {
 			//Execute and get the response.
 			HttpResponse response = hc.execute(httppost);
 			HttpEntity entity = response.getEntity();
-			///////////////////////////////////////////////
-			//todo check if 200 otherwise fail - possibly get id?
-			///////////////////////////////////////////////
+	
 			if (entity != null) {
 			    InputStream instream = entity.getContent();
 			    try {
