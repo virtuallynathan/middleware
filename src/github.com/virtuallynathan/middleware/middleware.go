@@ -182,23 +182,23 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if sensors.Accelerometer != "true" || sensors.Accelerometer != "false" {
+	if sensors.Accelerometer == "" {
 		rest.Error(w, "sensors Accelerometer t/f required", 400)
 		return
 	}
-	if sensors.GPS != "true" || sensors.GPS != "false" {
+	if sensors.GPS == "" {
 		rest.Error(w, "sensors GPS t/f required", 400)
 		return
 	}
-	if sensors.Light != "true" || sensors.Light != "false" {
+	if sensors.Light == "" {
 		rest.Error(w, "sensors Light t/f required", 400)
 		return
 	}
-	if sensors.Temperature != "true" || sensors.Temperature != "false" {
+	if sensors.Temperature == "" {
 		rest.Error(w, "sensors Temperature t/f required", 400)
 		return
 	}
-	if sensors.Orientation != "true" || sensors.Orientation != "false" {
+	if sensors.Orientation == "" {
 		rest.Error(w, "sensors Orientation t/f required", 400)
 		return
 	}
@@ -346,20 +346,19 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device Accelerometer t/f required", 400)
 		return
 	}
-	if device.GPS != "true" || device.GPS != "false" {
-		log.Printf("%s", device.GPS)
+	if device.GPS == "" {
 		rest.Error(w, "device GPS t/f required", 400)
 		return
 	}
-	if device.Light != "true" || device.Light != "false" {
+	if device.Light == "" {
 		rest.Error(w, "device Light t/f required", 400)
 		return
 	}
-	if device.Temperature != "true" || device.Temperature != "false" {
+	if device.Temperature == "" {
 		rest.Error(w, "device Temperature t/f required", 400)
 		return
 	}
-	if device.Orientation != "true" || device.Orientation != "false" {
+	if device.Orientation == "" {
 		rest.Error(w, "device Orientation t/f required", 400)
 		return
 	}
