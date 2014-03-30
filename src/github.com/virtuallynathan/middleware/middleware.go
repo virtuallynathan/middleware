@@ -182,6 +182,26 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if sensors.Accelerometer != "true" || sensors.Accelerometer != "false" {
+		rest.Error(w, "sensors Accelerometer t/f required", 400)
+		return
+	}
+	if sensors.GPS != "true" || sensors.GPS != "false" {
+		rest.Error(w, "sensors GPS t/f required", 400)
+		return
+	}
+	if sensors.Light != "true" || sensors.Light != "false" {
+		rest.Error(w, "sensors Light t/f required", 400)
+		return
+	}
+	if sensors.Temperature != "true" || sensors.Temperature != "false" {
+		rest.Error(w, "sensors Temperature t/f required", 400)
+		return
+	}
+	if sensors.Orientation != "true" || sensors.Orientation != "false" {
+		rest.Error(w, "sensors Orientation t/f required", 400)
+		return
+	}
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	device := Device{}
 	rows, err := deviceSensorStmt.Query(sensors.Accelerometer, sensors.GPS, sensors.Light, sensors.Temperature, sensors.Orientation)
@@ -322,23 +342,23 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device ConnectionLimit required", 400)
 		return
 	}
-	if device.Accelerometer == "" {
+	if device.Accelerometer != "true" || device.Accelerometer != "false" {
 		rest.Error(w, "device Accelerometer t/f required", 400)
 		return
 	}
-	if device.GPS == "" {
+	if device.GPS != "true" || device.GPS != "false" {
 		rest.Error(w, "device GPS t/f required", 400)
 		return
 	}
-	if device.Light == "" {
+	if device.Light != "true" || device.Light != "false" {
 		rest.Error(w, "device Light t/f required", 400)
 		return
 	}
-	if device.Temperature == "" {
+	if device.Temperature != "true" || device.Temperature != "false" {
 		rest.Error(w, "device Temperature t/f required", 400)
 		return
 	}
-	if device.Orientation == "" {
+	if device.Orientation != "true" || device.Orientation != "false" {
 		rest.Error(w, "device Orientation t/f required", 400)
 		return
 	}
