@@ -3,8 +3,11 @@ package main
 import (
 	"database/sql"
 	"log"
+	"math/rand"
 	"net/http"
 	"runtime"
+	"time"
+	"strconv"
 
 	"github.com/ant0ine/go-json-rest"
 	_ "github.com/go-sql-driver/mysql"
@@ -205,10 +208,9 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if device.DeviceID == "" {
-		rest.Error(w, "device id required", 400)
-		return
-	}
+
+	rand.Seed(time.Now().Unix())
+	device.DeviceID := strconv.Itoa(rand.Int(100000))
 	if device.IPAddr == "" {
 		rest.Error(w, "device IPAddr required", 400)
 		return
