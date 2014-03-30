@@ -223,11 +223,11 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if SensorLocationQuery.Location == "" {
+	if sensorLocationQuery.Location == "" {
 		rest.Error(w, "device query Location required", 400)
 		return
 	}
-	if SensorLocationQuery.Sensor == "" {
+	if sensorLocationQuery.Sensor == "" {
 		rest.Error(w, "device query Sensor required", 400)
 		return
 	}
