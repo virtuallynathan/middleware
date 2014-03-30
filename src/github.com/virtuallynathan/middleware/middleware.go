@@ -131,7 +131,6 @@ var (
 	Light           string
 	Temperature     string
 	Orientation     string
-}
 )
 
 //The store is a map containing structs of type Device.
