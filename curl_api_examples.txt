@@ -2,7 +2,13 @@
 
 curl -i -d '{"DeviceId":"2222","IPAddr":"192.168.1.123","ListenPort":"3123","Location":"ere", "ConnectionLimit":"12","Sensor":"GPS"}' http://server.nathan.io:8080/device/add
 
+
 curl -i http://server.nathan.io:8080/device/1231231
 
 curl -i http://127.0.0.1:8080/device/loc/hell
 
+
+
+curl -i -d '{"IPAddr":"192.168.1.123","ListenPort":"3123","Location":"ere", "ConnectionLimit":"12", "Accelerometer ":"false","GPS":"false","Light":"true","Temparture":"false","Orientation":"true"}'  http://server.nathan.io:8080/device/add
+
+{"IPAddr":"123.11.11","Accelerometer":"false","Light":"true","GPS":"false","ConnectionLimit":"6","Orientation":"true","Temparture":"false","ListenPort":"12323","Location":"2"}

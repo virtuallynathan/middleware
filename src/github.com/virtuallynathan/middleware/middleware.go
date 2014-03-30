@@ -342,7 +342,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device ConnectionLimit required", 400)
 		return
 	}
-	if device.Accelerometer != "true" || device.Accelerometer != "false" {
+	if device.Accelerometer == "" {
 		rest.Error(w, "device Accelerometer t/f required", 400)
 		return
 	}
