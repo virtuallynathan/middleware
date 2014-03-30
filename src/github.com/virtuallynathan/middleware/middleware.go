@@ -347,6 +347,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	if device.GPS != "true" || device.GPS != "false" {
+		log.Printf("%s", device.GPS)
 		rest.Error(w, "device GPS t/f required", 400)
 		return
 	}
