@@ -1,7 +1,0 @@
-package Consumer;
-
-import junit.framework.TestCase;
-
-public class ConsumerTest extends TestCase {
-
-}
