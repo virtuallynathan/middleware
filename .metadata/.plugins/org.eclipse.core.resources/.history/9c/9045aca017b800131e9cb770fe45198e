@@ -2,7 +2,7 @@ package Producer;
 import junit.framework.TestCase;
 
 
-/**Tests to make sure constructors are working properly
+/**Tests to make sure constructors are working properley
  *
  */
 public class ProducerTest extends TestCase {
@@ -24,7 +24,9 @@ public class ProducerTest extends TestCase {
 	 */
 	public void testProducerDefaults(){
 		
-		boolean defaultSensor = false;		
+		System.out.println("this test 1");		
+		boolean defaultSensor = false;
+		
 		assertEquals(d.location, -1);
 		assertEquals(d.connection_limit,0);
 		assertEquals(d.accelerometer, defaultSensor);
@@ -39,6 +41,10 @@ public class ProducerTest extends TestCase {
 	 */
 	public void testProducerSet(){
 
+		System.out.println("this test 2");
+
+		//Producer p = new Producer(2,6,"123.11.11","12323",false,false,true,true,false);
+		
 		assertEquals(p.location, 2);
 		assertEquals(p.connection_limit,6);
 		assertEquals(p.ip_addr,"123.11.11");

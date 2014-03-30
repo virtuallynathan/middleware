@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ProducerTest" project="CT" tests="3" started="3" failures="0" errors="0" ignored="0">
+  <testsuite name="Producer.ProducerTest" time="2.038">
+    <testcase name="testProducerRegistration" classname="Producer.ProducerTest" time="2.036"/>
+    <testcase name="testProducerDefaults" classname="Producer.ProducerTest" time="0.002"/>
+    <testcase name="testProducerSet" classname="Producer.ProducerTest" time="0.0"/>
+  </testsuite>
+</testrun>

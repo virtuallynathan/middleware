@@ -2,7 +2,7 @@ package Producer;
 import junit.framework.TestCase;
 
 
-/**Tests to make sure constructors are working properly
+/**Tests to make sure constructors are working properley
  *
  */
 public class ProducerTest extends TestCase {
