@@ -3,6 +3,7 @@ package Producer;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
@@ -30,9 +31,11 @@ public class ProducerRegister {
 
 			//tests if response is null, if not sets device id
 			if(entity!=null){
+				System.out.println(response.toString());
 				int code = response.getStatusLine().getStatusCode();
+				//tests ok status
 				if(code == 200){
-					System.out.println(response.toString());
+					
 					String r = EntityUtils.toString(entity);
 					JSONObject json = new JSONObject(r);
 					String id = (String) json.get("DeviceID");
@@ -51,6 +54,30 @@ public class ProducerRegister {
 	 * @param p
 	 */
 	public void producerHeartBeat(Producer p){
+		
+		HttpClient hc = HttpClients.createDefault();
+		HttpGet httpget = new HttpGet("http://middleware.nathan.io:8080/device/heartbeat" + p.device_id);
+		try{
+			//test if id null
+			//execute and get response
+			HttpResponse response = hc.execute(httpget);
+			HttpEntity entity = response.getEntity();
+			
+			//tests response ok
+			if (entity!=null){
+				System.out.println(response.toString());
+				int code = response.getStatusLine().getStatusCode();
+				if(code==200){
+					System.out.println("Heartbeat Registered");
+				}else{
+					System.out.println("Heartbeat Failed Status code"+ code);
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			
+		}
 
 	}
 

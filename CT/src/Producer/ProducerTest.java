@@ -56,11 +56,13 @@ public class ProducerTest extends TestCase {
 	 * output to console describes success, ensures
 	 * device id is set in return.
 	 */
-	public void testProducerRegistration(){
+	public void testProducerRegistrationHeartBeat(){
 		
 		ProducerRegister pr = new ProducerRegister();
 		pr.registerProducer(p);
 		assertNotNull(p.device_id);
+		pr.producerHeartBeat(p);
 	}
+	
 	
 }
