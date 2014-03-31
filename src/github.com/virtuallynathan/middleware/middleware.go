@@ -43,25 +43,39 @@ func main() {
 	}
 
 	//Prepare statement for inserting data
-	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
+	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		log.Printf(err.Error() + "sql insert addDeviceStmt prepare")
 	}
 	defer addDeviceStmt.Close()
 
-	//Prepare statement for updating a specific device's heartbeat time by DeviceID
-	DeviceHeartBeatStmt, err = db.Prepare("UPDATE devices SET HeartBeat = ? WHERE DeviceID = ?") // ? = placeholder
+	//Prepare statement for updating a specific device's HeartBeat time by DeviceID
+	DeviceHeartBeatStmt, err = db.Prepare("UPDATE devices SET HeartBeat = ? WHERE DeviceID = ?")
 	if err != nil {
 		log.Printf(err.Error() + "sql update DeviceHeartBeatStmt prepare")
 	}
 	defer DeviceHeartBeatStmt.Close()
 
-	//Prepare statement for updating a specific device's location by DeviceID
-	UpdateDeviceLocationStmt, err = db.Prepare("UPDATE devices SET Location = ? WHERE DeviceID = ?") // ? = placeholder
+	//Prepare statement for updating a specific device's Location by DeviceID
+	UpdateDeviceLocationStmt, err = db.Prepare("UPDATE devices SET Location = ? WHERE DeviceID = ?")
 	if err != nil {
 		log.Printf(err.Error() + "sql update UpdateDeviceLocationStmt prepare")
 	}
 	defer UpdateDeviceLocationStmt.Close()
+
+	//Prepare statement for updating a specific device's Location by DeviceID
+	UpdateDeviceConnectionStmt, err = db.Prepare("UPDATE devices SET ConnectionCount = ? WHERE DeviceID = ?")
+	if err != nil {
+		log.Printf(err.Error() + "sql update UpdateDeviceConnectionStmt prepare")
+	}
+	defer UpdateDeviceConnectionStmt.Close()
+
+	//Prepare statement for getting a specific device's ConnectionCount by DeviceID
+	GetDeviceConnectionStmt, err = db.Prepare("SELECT ConnectionCount, ConnectionLimit FROM devices WHERE DeviceID = ?")
+	if err != nil {
+		log.Printf(err.Error() + "sql update GetDeviceConnectionStmt prepare")
+	}
+	defer GetDeviceConnectionStmt.Close()
 
 	//Prepare statement selecting a device based on DeviceID
 	deviceIDStmt, err = db.Prepare("SELECT * FROM devices WHERE DeviceID = ?")
@@ -106,6 +120,8 @@ func main() {
 	handler.SetRoutes(
 		rest.Route{"POST", "/device/add", AddDevice},
 		rest.Route{"GET", "/device/:DeviceID", GetDeviceByID},
+		rest.Route{"GET", "/device/connect/:DeviceID", DeviceConnect},
+		rest.Route{"GET", "/device/disconnect/:DeviceID", DeviceDisconnect},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
 		rest.Route{"POST", "/device/set_loc", SetDeviceLocation},
 		rest.Route{"POST", "/device/sensor", GetDeviceBySensorType},
@@ -125,6 +141,7 @@ type Device struct {
 	ListenPort      string
 	Location        string
 	ConnectionLimit string
+	ConnectionCount string
 	HeartBeat       string
 	Accelerometer   string
 	GPS             string
@@ -166,6 +183,7 @@ var (
 	ListenPort      string
 	Location        string
 	ConnectionLimit string
+	ConnectionCount string
 	HeartBeat       string
 	Accelerometer   string
 	GPS             string
@@ -192,13 +210,59 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson("OK")
 }
 
+func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
+	deviceID := r.PathParam("DeviceID")
+	var deviceConnectionCount int
+	var deviceConnectionLimit int
+	rows, err := GetDeviceConnectionStmt.Query(deviceID)
+	if err != nil {
+		log.Printf("Error running GetDeviceConnectionStmt %s", err.Error())
+	}
+	for rows.Next() {
+		err := rows.Scan(&connectionCount, &ConnectionLimit)
+		if err != nil {
+			log.Printf("Error scanning rows %s", err.Error())
+		}
+	}
+	if deviceConnectionCount <= deviceConnectionLimit {
+		_, err := UpdateDeviceConnectionStmt.Exec(deviceConnectionCount + 1)
+		if err != nil {
+			log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
+		}
+		w.WriteJson("OK")
+	}
+	w.WriteJson("Connetion Limit Exceeded")
+}
+
+func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
+	deviceID := r.PathParam("DeviceID")
+	var deviceConnectionCount int
+	var deviceConnectionLimit int
+	rows, err := GetDeviceConnectionStmt.Query(deviceID)
+	if err != nil {
+		log.Printf("Error running GetDeviceConnectionStmt %s", err.Error())
+	}
+	for rows.Next() {
+		err := rows.Scan(&connectionCount, &ConnectionLimit)
+		if err != nil {
+			log.Printf("Error scanning rows %s", err.Error())
+		}
+	}
+	_, err := UpdateDeviceConnectionStmt.Exec(deviceConnectionCount - 1)
+	if err != nil {
+		log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
+	}
+	w.WriteJson("OK")
+
+}
+
 //This function takes in SQL rows and returns a map of devices that were in that query
 func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	device := Device{}
 	var devices []*Device //TODO: make this not an arbirary size
 	i := 0
 	for rs.Next() {
-		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &ConnectionCount, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
@@ -207,6 +271,7 @@ func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 		device.ListenPort = ListenPort
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
+		device.ConnectionCount = ConnectionCount
 		device.HeartBeat = HeartBeat
 		device.Accelerometer = Accelerometer
 		device.GPS = GPS
