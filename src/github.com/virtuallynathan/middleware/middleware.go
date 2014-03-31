@@ -22,6 +22,8 @@ var deviceSensorStmt *sql.Stmt
 var DeviceBySensorAndLocationStmt *sql.Stmt
 var DeviceHeartBeatStmt *sql.Stmt
 var UpdateDeviceLocationStmt *sql.Stmt
+var UpdateDeviceConnectionStmt *sql.Stmt
+var GetDeviceConnectionStmt *sql.Stmt
 
 func main() {
 
