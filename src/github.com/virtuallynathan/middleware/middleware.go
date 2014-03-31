@@ -233,7 +233,9 @@ func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 		}
 		w.WriteJson("OK")
 	}
-	w.WriteJson("Connetion Limit Exceeded")
+	else {
+		w.WriteJson("Connetion Limit Exceeded")
+	}
 }
 
 func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
