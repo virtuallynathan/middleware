@@ -178,6 +178,7 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson("OK")
 }
 
+//This function takes in SQL rows and returns a map of devices that were in that query
 func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	device := Device{}
 	devices := make([]*Device, 100)
@@ -208,12 +209,11 @@ func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 //This function queries the database returns the device matching the DeviceID provided.
 func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	rows, err := deviceIDStmt.Query(deviceID)
 	if err != nil {
 		log.Fatalf("Error running deviceIDStmt %s", err.Error())
 	}
-	devices = ProcessDeviceQuery(rows)
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 
 }
@@ -258,7 +258,6 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 //This function queries the database and returns the Device(s) that have a specific Sensor in a specific Location
 func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	sensorLocationQuery := SensorLocationQuery{}
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	err := r.DecodeJsonPayload(&sensorLocationQuery)
 	if err != nil {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
@@ -276,19 +275,18 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Fatalf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
 	}
-	devices = ProcessDeviceQuery(rows)
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 }
 
 //This function queries the database and returns the device(s) that are in a specific Location.
 func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	location := r.PathParam("Location")
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	rows, err := deviceLocationStmt.Query(location)
 	if err != nil {
 		log.Fatalf("Error running deviceLocationStmt %s", err.Error())
 	}
-	devices = ProcessDeviceQuery(rows)
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 }
 
