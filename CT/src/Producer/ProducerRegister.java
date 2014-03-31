@@ -35,7 +35,7 @@ public class ProducerRegister {
 				int code = response.getStatusLine().getStatusCode();
 				//tests ok status
 				if(code == 200){
-					
+
 					String r = EntityUtils.toString(entity);
 					JSONObject json = new JSONObject(r);
 					String id = (String) json.get("DeviceID");
@@ -54,31 +54,31 @@ public class ProducerRegister {
 	 * @param p
 	 */
 	public void producerHeartBeat(Producer p){
-		
-		HttpClient hc = HttpClients.createDefault();
-		HttpGet httpget = new HttpGet("http://middleware.nathan.io:8080/device/heartbeat" + p.device_id);
-		try{
-			//test if id null
-			//execute and get response
-			HttpResponse response = hc.execute(httpget);
-			HttpEntity entity = response.getEntity();
-			
-			//tests response ok
-			if (entity!=null){
-				System.out.println(response.toString());
-				int code = response.getStatusLine().getStatusCode();
-				if(code==200){
-					System.out.println("Heartbeat Registered");
-				}else{
-					System.out.println("Heartbeat Failed Status code"+ code);
-				}
-			}
-			
-		}catch(Exception e){
-			e.printStackTrace();
-			
-		}
 
+		if(p.testRegistered()){
+
+			HttpClient hc = HttpClients.createDefault();
+			HttpGet httpget = new HttpGet("http://middleware.nathan.io:8080/device/heartbeat" + p.device_id);
+			try{
+				//execute and get response
+				HttpResponse response = hc.execute(httpget);
+				HttpEntity entity = response.getEntity();
+				//tests response ok
+				if (entity!=null){
+					System.out.println(response.toString());
+					int code = response.getStatusLine().getStatusCode();
+					if(code==200){
+						System.out.println("Heartbeat Registered");
+					}else{
+						System.out.println("Heartbeat Failed Status code"+ code);
+					}
+				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}else{
+			System.out.println("Device not yet registered");
+		}
 	}
 
 }

@@ -67,10 +67,17 @@ public class Producer {
 		this.device_id=id;
 	}
 	
+	/**Check if device is registered by testing device id field
+	 * @return
+	 */
+	public boolean testRegistered(){
+		return (device_id!=null);
+	}
+	
+	/**Constructs JSON representation for the given producer.
+	 * @return
+	 */
 	public String createJsonNoId() {
-		
-
-
 		// define key string names
 		String ip_key = "IPAddr";
 		String port_key = "ListenPort";
@@ -81,7 +88,7 @@ public class Producer {
 		String light_key = "Light";
 		String orien_key = "Orientation";
 		String temp_key = "Temperature";
-
+		
 		JSONObject json = new JSONObject();
 		try {
 			json.put(ip_key, ip_addr);
@@ -93,7 +100,6 @@ public class Producer {
 			json.put(light_key, String.valueOf(light));
 			json.put(orien_key, String.valueOf(orientation));
 			json.put(temp_key, String.valueOf(temperature));
-
 		} catch (Exception e) {
 			System.out.println("Json Creation Failed");
 			e.printStackTrace();
