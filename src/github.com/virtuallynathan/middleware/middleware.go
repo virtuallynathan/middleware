@@ -199,7 +199,7 @@ func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 		device.Light = Light
 		device.Temperature = Temperature
 		device.Orientation = Orientation
-		devices[i] = &device
+		devices[i] = append(devices, &device)
 
 		i++
 	}
