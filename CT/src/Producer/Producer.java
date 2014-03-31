@@ -10,17 +10,17 @@ import api.APIConnection;
 public class Producer {
 		
 	//attributes
-	int location;
-	int connection_limit;
-	String ip_addr;
-	String port;
-	String device_id;
+	private int location;
+	private int connection_limit;
+	private String ip_addr;
+	private String port;
+	private String device_id;
 	//sensors supported
-	boolean accelerometer;
-	boolean gps;
-	boolean light;
-	boolean orientation;
-	boolean temperature;
+	private boolean accelerometer;
+	private boolean gps;
+	private boolean light;
+	private boolean orientation;
+	private boolean temperature;
 	
 	/**Sets Values to defaults
 	 * location -1
@@ -62,13 +62,87 @@ public class Producer {
 		this.orientation = orien;
 	}
 	
-	/**Setter for device id
-	 * @param id
-	 */
-	public void setDeviceId(String id){
-		this.device_id=id;
-	}
 	
+	public int getLocation() {
+		return location;
+	}
+
+	public void setLocation(int location) {
+		this.location = location;
+	}
+
+	public int getConnection_limit() {
+		return connection_limit;
+	}
+
+	public void setConnection_limit(int connection_limit) {
+		this.connection_limit = connection_limit;
+	}
+
+	public String getIp_addr() {
+		return ip_addr;
+	}
+
+	public void setIp_addr(String ip_addr) {
+		this.ip_addr = ip_addr;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	public String getDevice_id() {
+		return device_id;
+	}
+
+	public void setDevice_id(String device_id) {
+		this.device_id = device_id;
+	}
+
+	public boolean isAccelerometer() {
+		return accelerometer;
+	}
+
+	public void setAccelerometer(boolean accelerometer) {
+		this.accelerometer = accelerometer;
+	}
+
+	public boolean isGps() {
+		return gps;
+	}
+
+	public void setGps(boolean gps) {
+		this.gps = gps;
+	}
+
+	public boolean isLight() {
+		return light;
+	}
+
+	public void setLight(boolean light) {
+		this.light = light;
+	}
+
+	public boolean isOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(boolean orientation) {
+		this.orientation = orientation;
+	}
+
+	public boolean isTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(boolean temperature) {
+		this.temperature = temperature;
+	}
+
 	/**Check if device is registered by testing device id field
 	 * @return
 	 */

@@ -18,6 +18,7 @@ public class RandomProducerData {
 	public Producer setAllRandom(Producer p){		
 		p = randomLocation(p);
 		p = randomConnections(p);
+		p = randomPortAndIp(p);
 		p = randomSensors(p);		
 		return p;
 	}	
@@ -28,7 +29,7 @@ public class RandomProducerData {
 	 */
 	public Producer randomLocation(Producer p){
 		Random rand = new Random();		
-		p.location = rand.nextInt(MAX_NUMBER_LOCATIONS-1);
+		p.setLocation(rand.nextInt(MAX_NUMBER_LOCATIONS-1));
 		return p;
 	}
 	
@@ -38,7 +39,16 @@ public class RandomProducerData {
 	 */
 	public Producer randomConnections(Producer p){
 		Random rand = new Random();		
-		p.location = rand.nextInt(MAX_NUMBER_CONNECTIONS-1);
+		p.setLocation(rand.nextInt(MAX_NUMBER_CONNECTIONS-1));
+		return p;
+	}
+	
+	public Producer randomPortAndIp(Producer p){		
+		Random r = new Random();
+		String ip = r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
+		p.setIp_addr(ip);
+		String port = String.valueOf(r.nextInt(65536));
+		p.setPort(port);		
 		return p;
 	}
 	
@@ -48,11 +58,11 @@ public class RandomProducerData {
 	 */
 	public Producer randomSensors(Producer p){
 		Random rand = new Random();
-		p.accelerometer = rand.nextBoolean();
-		p.gps = rand.nextBoolean();
-		p.light = rand.nextBoolean();
-		p.temperature = rand.nextBoolean();
-		p.orientation = rand.nextBoolean();		
+		p.setAccelerometer(rand.nextBoolean());
+		p.setGps(rand.nextBoolean());
+		p.setLight(rand.nextBoolean());
+		p.setTemperature(rand.nextBoolean());
+		p.setOrientation(rand.nextBoolean());		
 		return p;
 	}
 

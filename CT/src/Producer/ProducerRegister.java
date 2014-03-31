@@ -48,7 +48,7 @@ public class ProducerRegister {
 			try{
 				//execute and get response
 				APIConnection api = new APIConnection();
-				HttpResponse response = api.get(api.getHeartbeat(), p.device_id);
+				HttpResponse response = api.get(api.getHeartbeat(), p.getDevice_id());
 				if (response!=null){
 					System.out.println(response.toString()); /////////////////remove just to show response for now
 					code = api.getResponse(response);
@@ -75,7 +75,7 @@ public class ProducerRegister {
 		String r = EntityUtils.toString(entity);
 		JSONObject json = new JSONObject(r);
 		String id = (String) json.get("DeviceID");
-		p.setDeviceId(id);		
+		p.setDevice_id(id);		
 	}
 
 }

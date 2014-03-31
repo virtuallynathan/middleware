@@ -25,13 +25,13 @@ public class ProducerTest extends TestCase {
 	public void testProducerDefaults(){
 		
 		boolean defaultSensor = false;		
-		assertEquals(d.location, -1);
-		assertEquals(d.connection_limit,0);
-		assertEquals(d.accelerometer, defaultSensor);
-		assertEquals(d.gps, defaultSensor);
-		assertEquals(d.light, defaultSensor);
-		assertEquals(d.orientation, defaultSensor);
-		assertEquals(d.temperature, defaultSensor);
+		assertEquals(d.getLocation(), -1);
+		assertEquals(d.getConnection_limit(),0);
+		assertEquals(d.isAccelerometer(), defaultSensor);
+		assertEquals(d.isGps(), defaultSensor);
+		assertEquals(d.isLight(), defaultSensor);
+		assertEquals(d.isOrientation(), defaultSensor);
+		assertEquals(d.isTemperature(), defaultSensor);
 	}
 	
 	
@@ -39,15 +39,15 @@ public class ProducerTest extends TestCase {
 	 */
 	public void testProducerSet(){
 
-		assertEquals(p.location, 2);
-		assertEquals(p.connection_limit,6);
-		assertEquals(p.ip_addr,"123.11.11");
-		assertEquals(p.port, "12323");
-		assertEquals(p.accelerometer, false);
-		assertEquals(p.gps, false);
-		assertEquals(p.light, true);
-		assertEquals(p.orientation, true);
-		assertEquals(p.temperature, false); 
+		assertEquals(p.getLocation(), 2);
+		assertEquals(p.getConnection_limit(),6);
+		assertEquals(p.getIp_addr(),"123.11.11");
+		assertEquals(p.getPort(), "12323");
+		assertEquals(p.isAccelerometer(), false);
+		assertEquals(p.isGps(), false);
+		assertEquals(p.isLight(), true);
+		assertEquals(p.isOrientation(), true);
+		assertEquals(p.isTemperature(), false); 
 		
 		p.createJsonNoId();
 	}
@@ -60,7 +60,7 @@ public class ProducerTest extends TestCase {
 		
 		ProducerRegister pr = new ProducerRegister();
 		pr.registerProducer(p);
-		assertNotNull(p.device_id);
+		assertNotNull(p.getDevice_id());
 		pr.producerHeartBeat(p);
 	}
 	
