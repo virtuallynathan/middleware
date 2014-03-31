@@ -173,6 +173,7 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Fatalf("Error running DeviceHeartBeatStmt %s", err.Error())
 	}
+	w.WriteJson("OK")
 }
 
 //This function queries the database returns the device matching the DeviceID provided.
