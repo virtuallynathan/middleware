@@ -116,6 +116,7 @@ type Device struct {
 	ListenPort      string
 	Location        string
 	ConnectionLimit string
+	HeartBeat       string
 	Accelerometer   string
 	GPS             string
 	Light           string
@@ -151,6 +152,7 @@ var (
 	ListenPort      string
 	Location        string
 	ConnectionLimit string
+	HeartBeat       string
 	Accelerometer   string
 	GPS             string
 	Light           string
@@ -169,33 +171,29 @@ func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
 //This function sets the heartbeat for a specific device to the current unix time.
 func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	_, err := DeviceHeartBeatStmt.Exec(deviceID, time.Now().Unix())
+	_, err := DeviceHeartBeatStmt.Exec(time.Now().Unix(), deviceID)
 	if err != nil {
 		log.Fatalf("Error running DeviceHeartBeatStmt %s", err.Error())
 	}
+	w.WriteJson("OK")
 }
 
-//This function queries the database returns the device matching the DeviceID provided.
-func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
-	deviceID := r.PathParam("DeviceID")
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
+//This function takes in SQL rows and returns a map of devices that were in that query
+func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	device := Device{}
-	rows, err := deviceIDStmt.Query(deviceID)
-	if err != nil {
-		log.Fatalf("Error running deviceIDStmt %s", err.Error())
-	}
-	//TODO: put this shit in a function, DRY.
+	devices := make([]*Device, 100)
 	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+	for rs.Next() {
+		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
+			log.Fatalf("Error scanning rows %s", err.Error())
 		}
 		device.DeviceID = DeviceID
 		device.IPAddr = IPAddr
 		device.ListenPort = ListenPort
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
+		device.HeartBeat = HeartBeat
 		device.Accelerometer = Accelerometer
 		device.GPS = GPS
 		device.Light = Light
@@ -205,6 +203,17 @@ func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 
 		i++
 	}
+	return devices
+}
+
+//This function queries the database returns the device matching the DeviceID provided.
+func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
+	deviceID := r.PathParam("DeviceID")
+	rows, err := deviceIDStmt.Query(deviceID)
+	if err != nil {
+		log.Fatalf("Error running deviceIDStmt %s", err.Error())
+	}
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 
 }
@@ -237,116 +246,62 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "sensors Orientation t/f required", 400)
 		return
 	}
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
-	device := Device{}
 	rows, err := deviceSensorStmt.Query(sensors.Accelerometer, sensors.GPS, sensors.Light, sensors.Temperature, sensors.Orientation)
 	if err != nil {
 		log.Fatalf("Error running deviceSensorStmt %s", err.Error())
 	}
-
-	//TODO: put this shit in a function, DRY.
-	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
-		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
-		}
-		device.DeviceID = DeviceID
-		device.IPAddr = IPAddr
-		device.ListenPort = ListenPort
-		device.Location = Location
-		device.ConnectionLimit = ConnectionLimit
-		device.Accelerometer = Accelerometer
-		device.GPS = GPS
-		device.Light = Light
-		device.Temperature = Temperature
-		device.Orientation = Orientation
-		devices[i] = &device
-
-		i++
-	}
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 }
 
 //This function queries the database and returns the Device(s) that have a specific Sensor in a specific Location
 func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	sensorLocationQuery := SensorLocationQuery{}
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
-	device := Device{}
 	err := r.DecodeJsonPayload(&sensorLocationQuery)
 	if err != nil {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if sensorLocationQuery.Location == "" {
-		rest.Error(w, "device query Location required", 400)
-		return
-	}
 	if sensorLocationQuery.Accelerometer == "" {
-		rest.Error(w, "device query Sensor required", 400)
+		rest.Error(w, "device sensor Accelerometer t/f required", 400)
 		return
 	}
-	rows, err := DeviceBySensorAndLocationStmt.Query(sensorLocationQuery.Accelerometer, sensorLocationQuery.Location)
+	if sensorLocationQuery.GPS == "" {
+		rest.Error(w, "device sensor GPS t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Light == "" {
+		rest.Error(w, "device sensor Light t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Temperature == "" {
+		rest.Error(w, "device sensor Temperature t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Orientation == "" {
+		rest.Error(w, "device sensor Orientation t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Location == "" {
+		rest.Error(w, "device Location required", 400)
+		return
+	}
+	rows, err := DeviceBySensorAndLocationStmt.Query(sensorLocationQuery.Accelerometer, sensorLocationQuery.GPS, sensorLocationQuery.Light, sensorLocationQuery.Temperature, sensorLocationQuery.Orientation, sensorLocationQuery.Location)
 	if err != nil {
 		log.Fatalf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
 	}
-
-	//TODO: put this shit in a function, DRY.
-	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
-		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
-		}
-		device.DeviceID = DeviceID
-		device.IPAddr = IPAddr
-		device.ListenPort = ListenPort
-		device.Location = Location
-		device.ConnectionLimit = ConnectionLimit
-		device.Accelerometer = Accelerometer
-		device.GPS = GPS
-		device.Light = Light
-		device.Temperature = Temperature
-		device.Orientation = Orientation
-		devices[i] = &device
-
-		i++
-	}
-
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
-
 }
 
 //This function queries the database and returns the device(s) that are in a specific Location.
 func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	location := r.PathParam("Location")
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
-	device := Device{}
 	rows, err := deviceLocationStmt.Query(location)
 	if err != nil {
 		log.Fatalf("Error running deviceLocationStmt %s", err.Error())
 	}
-	//TODO: put this shit in a function, DRY.
-	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
-		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
-		}
-		device.DeviceID = DeviceID
-		device.IPAddr = IPAddr
-		device.ListenPort = ListenPort
-		device.Location = Location
-		device.ConnectionLimit = ConnectionLimit
-		device.Accelerometer = Accelerometer
-		device.GPS = GPS
-		device.Light = Light
-		device.Temperature = Temperature
-		device.Orientation = Orientation
-		devices[i] = &device
-
-		i++
-	}
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 }
 
@@ -397,7 +352,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device Orientation t/f required", 400)
 		return
 	}
-	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Accelerometer, device.GPS, device.Light, device.Temperature, device.Orientation)
+	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Accelerometer, device.GPS, device.Light, device.Temperature, device.Orientation, time.Now().Unix())
 	if err != nil {
 		log.Fatalf("Error running addDeviceStmt %s", err.Error())
 	}
