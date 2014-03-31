@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ant0ine/go-json-rest"
@@ -335,7 +336,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	log.Printf("%s", device.Accelerometer)
-	if device.Accelerometer != falseString || device.Accelerometer != trueString {
+	if !strings.Contains(device.Accelerometer, falseString) || !strings.Contains(device.Accelerometer, trueString) {
 		rest.Error(w, "device Accelerometer t/f required", 400)
 		return
 	}
