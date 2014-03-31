@@ -202,6 +202,7 @@ func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 
 		i++
 	}
+	return devices
 }
 
 //This function queries the database returns the device matching the DeviceID provided.
