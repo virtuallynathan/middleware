@@ -23,26 +23,18 @@ public class ProducerRegister {
 		APIConnection api = new APIConnection();
 		HttpResponse response = api.post(api.register(), p.createJsonNoId());
 		try{
-			HttpEntity entity = response.getEntity();
-			//tests if response is null, if not sets device id
-			if(entity!=null){
-				System.out.println(response.toString());
-				int code = response.getStatusLine().getStatusCode();
-				//tests ok status
-				if(code == 200){
-
-					String r = EntityUtils.toString(entity);
-					JSONObject json = new JSONObject(r);
-					String id = (String) json.get("DeviceID");
-					p.setDeviceId(id);
-				}
-			}	
+			System.out.println(response.toString()); /////////////////remove just to show response for now
+			if (api.testResponseOK(response)){	
+				HttpEntity entity = response.getEntity();
+				if(entity!=null){					
+					setDeviceID(entity, p);					
+				}	
+			}
 		}catch(Exception e){
 			System.out.println("Failed to post using /device/add");
 			e.printStackTrace();
 		}
 	}
-
 
 
 	/**Method to send heart beat to the register
@@ -53,7 +45,7 @@ public class ProducerRegister {
 		if(p.testRegistered()){
 
 			HttpClient hc = HttpClients.createDefault();
-			HttpGet httpget = new HttpGet("http://middleware.nathan.io:8080/device/heartbeat" + p.device_id);
+			HttpGet httpget = new HttpGet("http://middleware.nathan.io:8080/device/heartbeat/" + p.device_id);
 			try{
 				//execute and get response
 				HttpResponse response = hc.execute(httpget);
@@ -74,6 +66,20 @@ public class ProducerRegister {
 		}else{
 			System.out.println("Device not yet registered");
 		}
+	}
+	
+	
+	/**Helper method to set id of a device
+	 * @param entity
+	 * @param p
+	 * @throws Exception
+	 */
+	private void setDeviceID(HttpEntity entity, Producer p) throws Exception {
+		
+		String r = EntityUtils.toString(entity);
+		JSONObject json = new JSONObject(r);
+		String id = (String) json.get("DeviceID");
+		p.setDeviceId(id);		
 	}
 
 }

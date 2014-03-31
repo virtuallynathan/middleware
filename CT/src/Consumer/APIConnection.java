@@ -50,11 +50,14 @@ public class APIConnection {
 			return response;	
 	}
 	
-	public int testResponseOK(HttpResponse r){
+	/**Confirm Status line ok
+	 * @param r
+	 * @return
+	 */
+	public boolean testResponseOK(HttpResponse r){
 		
-		int code = 0;
-		
-		return code;		
+		int code = r.getStatusLine().getStatusCode();		
+		return (code==200);		
 	}
 	
 	
