@@ -169,7 +169,7 @@ func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
 //This function sets the heartbeat for a specific device to the current unix time.
 func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	_, err = DeviceHeartBeatStmt.Exec(deviceID, time.Now().Unix())
+	_, err := DeviceHeartBeatStmt.Exec(deviceID, time.Now().Unix())
 	if err != nil {
 		log.Fatalf("Error running DeviceHeartBeatStmt %s", err.Error())
 	}
