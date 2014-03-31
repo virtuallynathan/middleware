@@ -229,6 +229,7 @@ func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 	log.Printf("Count: %d, Limit: %d", deviceConnectionCount, deviceConnectionLimit)
 	deviceConnectionCount = deviceConnectionCount + 1
 	if deviceConnectionCount <= deviceConnectionLimit {
+		log.Printf("New Count: %d", deviceConnectionCount)
 		_, err := UpdateDeviceConnectionStmt.Exec(deviceConnectionCount, DeviceID)
 		if err != nil {
 			log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
