@@ -307,6 +307,8 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 
 //This function adds a device to the database, and generates a DeviceID
 func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
+	trueString := "true"
+	falseString := "false"
 	device := Device{}
 	err := r.DecodeJsonPayload(&device)
 	if err != nil {
@@ -333,7 +335,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	log.Printf("%s", device.Accelerometer)
-	if device.Accelerometer == "" {
+	if device.Accelerometer != falseString || device.Accelerometer != trueString {
 		rest.Error(w, "device Accelerometer t/f required", 400)
 		return
 	}
