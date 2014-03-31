@@ -44,49 +44,49 @@ func main() {
 	//Prepare statement for inserting data
 	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
-		log.Fatalf(err.Error() + "sql insert addDeviceStmt prepare")
+		log.Printf(err.Error() + "sql insert addDeviceStmt prepare")
 	}
 	defer addDeviceStmt.Close()
 
 	//Prepare statement for updating a specific device's heartbeat time by DeviceID
 	DeviceHeartBeatStmt, err = db.Prepare("UPDATE devices SET HeartBeat = ? WHERE DeviceID = ?") // ? = placeholder
 	if err != nil {
-		log.Fatalf(err.Error() + "sql update DeviceHeartBeatStmt prepare")
+		log.Printf(err.Error() + "sql update DeviceHeartBeatStmt prepare")
 	}
 	defer DeviceHeartBeatStmt.Close()
 
 	//Prepare statement selecting a device based on DeviceID
 	deviceIDStmt, err = db.Prepare("SELECT * FROM devices WHERE DeviceID = ?")
 	if err != nil {
-		log.Fatalf(err.Error() + "sql select deviceIDStmt prepare")
+		log.Printf(err.Error() + "sql select deviceIDStmt prepare")
 	}
 	defer deviceIDStmt.Close()
 
 	//Prepare statement for selecting devices based on Location
 	deviceLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Location = ?")
 	if err != nil {
-		log.Fatalf(err.Error() + "sql select deviceLocationStmt prepare")
+		log.Printf(err.Error() + "sql select deviceLocationStmt prepare")
 	}
 	defer deviceLocationStmt.Close()
 
 	//Prepare statement for selecting devices based on Sensor(s)
 	deviceSensorStmt, err = db.Prepare("SELECT * FROM devices WHERE Accelerometer = ? AND GPS = ? AND Light = ? AND Temperature = ? AND Orientation = ?")
 	if err != nil {
-		log.Fatalf(err.Error() + "sql select deviceSensorStmt prepare")
+		log.Printf(err.Error() + "sql select deviceSensorStmt prepare")
 	}
 	defer deviceSensorStmt.Close()
 
 	//Prepare statement for selecting devices based on Sensors(s) and Location
 	DeviceBySensorAndLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Accelerometer = ? AND GPS = ? AND Light = ? AND Temperature = ? AND Orientation = ? AND Location = ?")
 	if err != nil {
-		log.Fatalf(err.Error() + "sql select DeviceBySensorAndLocationStmt prepare")
+		log.Printf(err.Error() + "sql select DeviceBySensorAndLocationStmt prepare")
 	}
 	defer DeviceBySensorAndLocationStmt.Close()
 
 	//Prepare statement for deleteing a device based on DeviceID
 	removeDeviceStmt, err = db.Prepare("DELETE FROM devices WHERE DeviceID = ?")
 	if err != nil {
-		log.Fatalf(err.Error() + "sql select removeDeviceStmt prepare")
+		log.Printf(err.Error() + "sql select removeDeviceStmt prepare")
 	}
 	defer removeDeviceStmt.Close()
 	//End database query setup
@@ -173,7 +173,7 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
 	_, err := DeviceHeartBeatStmt.Exec(time.Now().Unix(), deviceID)
 	if err != nil {
-		log.Fatalf("Error running DeviceHeartBeatStmt %s", err.Error())
+		log.Printf("Error running DeviceHeartBeatStmt %s", err.Error())
 	}
 	w.WriteJson("OK")
 }
@@ -186,7 +186,7 @@ func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	for rs.Next() {
 		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
-			log.Fatalf("Error scanning rows %s", err.Error())
+			log.Printf("Error scanning rows %s", err.Error())
 		}
 		device.DeviceID = DeviceID
 		device.IPAddr = IPAddr
@@ -211,7 +211,7 @@ func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
 	rows, err := deviceIDStmt.Query(deviceID)
 	if err != nil {
-		log.Fatalf("Error running deviceIDStmt %s", err.Error())
+		log.Printf("Error running deviceIDStmt %s", err.Error())
 	}
 	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
@@ -248,7 +248,7 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 	}
 	rows, err := deviceSensorStmt.Query(sensors.Accelerometer, sensors.GPS, sensors.Light, sensors.Temperature, sensors.Orientation)
 	if err != nil {
-		log.Fatalf("Error running deviceSensorStmt %s", err.Error())
+		log.Printf("Error running deviceSensorStmt %s", err.Error())
 	}
 	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
@@ -288,7 +288,7 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	}
 	rows, err := DeviceBySensorAndLocationStmt.Query(sensorLocationQuery.Accelerometer, sensorLocationQuery.GPS, sensorLocationQuery.Light, sensorLocationQuery.Temperature, sensorLocationQuery.Orientation, sensorLocationQuery.Location)
 	if err != nil {
-		log.Fatalf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
+		log.Printf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
 	}
 	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
@@ -299,7 +299,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	location := r.PathParam("Location")
 	rows, err := deviceLocationStmt.Query(location)
 	if err != nil {
-		log.Fatalf("Error running deviceLocationStmt %s", err.Error())
+		log.Printf("Error running deviceLocationStmt %s", err.Error())
 	}
 	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
@@ -354,7 +354,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	}
 	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Accelerometer, device.GPS, device.Light, device.Temperature, device.Orientation, time.Now().Unix())
 	if err != nil {
-		log.Fatalf("Error running addDeviceStmt %s", err.Error())
+		log.Printf("Error running addDeviceStmt %s", err.Error())
 	}
 
 	w.WriteJson(&device)
@@ -366,6 +366,6 @@ func RemoveDevice(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
 	_, err := removeDeviceStmt.Exec(deviceID)
 	if err != nil {
-		log.Fatalf("Error running removeDeviceStmt %s", err.Error())
+		log.Printf("Error running removeDeviceStmt %s", err.Error())
 	}
 }
