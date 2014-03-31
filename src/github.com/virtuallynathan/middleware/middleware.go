@@ -262,15 +262,31 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if sensorLocationQuery.Location == "" {
-		rest.Error(w, "device query Location required", 400)
-		return
-	}
 	if sensorLocationQuery.Accelerometer == "" {
-		rest.Error(w, "device query Sensor required", 400)
+		rest.Error(w, "device sensor Accelerometer t/f required", 400)
 		return
 	}
-	rows, err := DeviceBySensorAndLocationStmt.Query(sensorLocationQuery.Accelerometer, sensorLocationQuery.Location)
+	if sensorLocationQuery.GPS == "" {
+		rest.Error(w, "device sensor GPS t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Light == "" {
+		rest.Error(w, "device sensor Light t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Temperature == "" {
+		rest.Error(w, "device sensor Temperature t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Orientation == "" {
+		rest.Error(w, "device sensor Orientation t/f required", 400)
+		return
+	}
+	if sensorLocationQuery.Location == "" {
+		rest.Error(w, "device Location required", 400)
+		return
+	}
+	rows, err := DeviceBySensorAndLocationStmt.Query(sensorLocationQuery.Accelerometer, sensorLocationQuery.GPS, sensorLocationQuery.Light, sensorLocationQuery.Temperature, sensorLocationQuery.Orientation, sensorLocationQuery.Location)
 	if err != nil {
 		log.Fatalf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
 	}
