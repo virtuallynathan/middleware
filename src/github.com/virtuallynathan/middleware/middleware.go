@@ -179,6 +179,7 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 }
 
 func ProcessDeviceQuery(rs *Rows) []*Device {
+	device := Device{}
 	devices := make([]*Device, 100)
 	i := 0
 	for rs.Next() {
