@@ -21,24 +21,24 @@ public class ConsumerTest extends TestCase {
 	 */
 	public void testConsumerDefault(){
 		boolean defaultConsumer = false;
-		assertEquals(c.location, -1);
-		assertEquals(c.accelerometer, defaultConsumer);
-		assertEquals(c.gps, defaultConsumer);
-		assertEquals(c.light, defaultConsumer);
-		assertEquals(c.orientation, defaultConsumer);
-		assertEquals(c.temperature, defaultConsumer);
+		assertEquals(c.getLocation(), -1);
+		assertEquals(c.isAccelerometer(), defaultConsumer);
+		assertEquals(c.isGps(), defaultConsumer);
+		assertEquals(c.isLight(), defaultConsumer);
+		assertEquals(c.isOrientation(), defaultConsumer);
+		assertEquals(c.isTemperature(), defaultConsumer);
 	}
 	
 	/**Test all consumer state is set correctly.
 	 */
 	public void testSetConsumer(){
 		c = new Consumer(5,false,false,true,true,false);
-		assertEquals(c.location, 5);
-		assertEquals(c.accelerometer, false);
-		assertEquals(c.gps, false);
-		assertEquals(c.light, true);
-		assertEquals(c.orientation, true);
-		assertEquals(c.temperature,false);
+		assertEquals(c.getLocation(), 5);
+		assertEquals(c.isAccelerometer(), false);
+		assertEquals(c.isGps(), false);
+		assertEquals(c.isLight(), true);
+		assertEquals(c.isOrientation(), true);
+		assertEquals(c.isTemperature(),false);
 	}
 	
 	/**Tests only one value at most is true. 
@@ -46,7 +46,7 @@ public class ConsumerTest extends TestCase {
 	public void testRandomSingleSensor(){
 		
 		rcd.randomSingleSensor(c);
-		assertTrue(c.accelerometer^c.gps^c.light^c.orientation^c.temperature);
+		assertTrue(c.isAccelerometer()^c.isGps()^c.isLight()^c.isOrientation()^c.isTemperature());
 	}
 	
 	public void testProducerRequest(){

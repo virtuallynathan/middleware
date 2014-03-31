@@ -10,19 +10,82 @@ import api.APIConnection;
 public class Consumer {
 	
 	//state for consumer
-	//location
-	int location;
+	private int location;
 	//sensors requested
-	boolean accelerometer;
-	boolean gps;
-	boolean light;
-	boolean orientation;
-	boolean temperature;
+	private boolean accelerometer;
+	private boolean gps;
+	private boolean light;
+	private boolean orientation;
+	private boolean temperature;
+	//connection details
+	private String connection_ip;
+	private String connection_port;
 	
-	String connection_ip;
-	String connection_port;
 	
-	
+	public int getLocation() {
+		return location;
+	}
+
+	public void setLocation(int location) {
+		this.location = location;
+	}
+
+	public boolean isAccelerometer() {
+		return accelerometer;
+	}
+
+	public void setAccelerometer(boolean accelerometer) {
+		this.accelerometer = accelerometer;
+	}
+
+	public boolean isGps() {
+		return gps;
+	}
+
+	public void setGps(boolean gps) {
+		this.gps = gps;
+	}
+
+	public boolean isLight() {
+		return light;
+	}
+
+	public void setLight(boolean light) {
+		this.light = light;
+	}
+
+	public boolean isOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(boolean orientation) {
+		this.orientation = orientation;
+	}
+
+	public boolean isTemperature() {
+		return temperature;
+	}
+
+	public void setTemperature(boolean temperature) {
+		this.temperature = temperature;
+	}
+
+	public String getConnection_ip() {
+		return connection_ip;
+	}
+
+	public void setConnection_ip(String connection_ip) {
+		this.connection_ip = connection_ip;
+	}
+
+	public String getConnection_port() {
+		return connection_port;
+	}
+
+	public void setConnection_port(String connection_port) {
+		this.connection_port = connection_port;
+	}
+
 	/**Sets up a consumer with default values.
 	 */
 	public Consumer(){		
@@ -48,13 +111,7 @@ public class Consumer {
 		this.temperature = temp;
 	}
 
-	public void setConnectionPort(String cp){
-		connection_port = cp;
-	}
-	
-	public void setConnectionIP(String cip){
-		connection_ip = cip;		
-	}
+
 	
 	/**Sets all sensor values to the same boolean parameter
 	 */

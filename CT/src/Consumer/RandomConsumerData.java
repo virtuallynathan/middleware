@@ -20,7 +20,7 @@ public class RandomConsumerData {
 	 */
 	public Consumer randomLocation(Consumer c){		
 		Random rand = new Random();
-		c.location = rand.nextInt(MAX_NUMBER_LOCATIONS-1);
+		c.setLocation(rand.nextInt(MAX_NUMBER_LOCATIONS-1));
 		return c;
 	}
 	
@@ -31,11 +31,11 @@ public class RandomConsumerData {
 	 */
 	public Consumer randomSensors(Consumer c){		
 		Random rand = new Random();
-		c.accelerometer = rand.nextBoolean();
-		c.gps = rand.nextBoolean();
-		c.light = rand.nextBoolean();
-		c.orientation = rand.nextBoolean();
-		c.temperature = rand.nextBoolean();		
+		c.setAccelerometer(rand.nextBoolean());
+		c.setGps(rand.nextBoolean());
+		c.setLight(rand.nextBoolean());
+		c.setOrientation(rand.nextBoolean());
+		c.setTemperature(rand.nextBoolean());		
 		return c;		
 	}
 	
@@ -45,19 +45,19 @@ public class RandomConsumerData {
 		c.setAllSensors(false);
 		switch (choice) {
 		case 1:
-			c.accelerometer = true;
+			c.setAccelerometer(true);
 			break;
 		case 2:
-			c.gps = true;
+			c.setGps(true);
 			break;
 		case 3:
-			c.light = true;
+			c.setLight(true);
 			break;
 		case 4:
-			c.orientation = true;
+			c.setOrientation(true);
 			break;
 		case 5:
-			c.temperature = true;			
+			c.setTemperature(true);			
 			break;
 		}	return c;
 	}

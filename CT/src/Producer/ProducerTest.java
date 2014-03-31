@@ -17,8 +17,7 @@ public class ProducerTest extends TestCase {
 		
 		p = new Producer(2,6,"123.11.11","12323",false,false,true,true,false);
 		d = new Producer();		
-	}
-	
+	}	
 	
 	/**Test set default state is correct
 	 */

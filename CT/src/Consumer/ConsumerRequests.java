@@ -40,10 +40,10 @@ public class ConsumerRequests {
 				System.out.println(json1.toString());
 				String port = (String) json1.get(api.getPort_key());
 				String ip = (String) json1.get(api.getIp_key());
-				c.setConnectionIP(ip);
-				c.setConnectionPort(port);
+				c.setConnection_ip(ip);
+				c.setConnection_ip(port);
 				
-				System.out.println(c.connection_port + " and " + c.connection_ip);
+				System.out.println(c.getConnection_port() + " and " + c.getConnection_ip());
 				
 				
 			}

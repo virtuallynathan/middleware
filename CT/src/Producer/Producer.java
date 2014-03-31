@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import api.APIConnection;
 
-/**Class providing a Producer object and required state
+/**Class providing a producer object and required state
  *
  */
 public class Producer {
@@ -22,7 +22,7 @@ public class Producer {
 	private boolean orientation;
 	private boolean temperature;
 	
-	/**Sets Values to defaults
+	/**Constructor sets values to defaults
 	 * location -1
 	 * connections 0
 	 * sensors all false
@@ -40,7 +40,7 @@ public class Producer {
 		this.temperature = false;
 	}
 
-	/**Sets Producer state to given parameters
+	/**Constructor sets producer state to given parameters
 	 * @param location
 	 * @param c_l
 	 * @param accel
