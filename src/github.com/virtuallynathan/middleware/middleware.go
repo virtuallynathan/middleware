@@ -179,19 +179,21 @@ type Sensors struct {
 //temporary assignment variables for adding a device or retrieving a device
 //Used to transfer POST variables or MySQL rows to the Device struct
 var (
-	ID              string
-	DeviceID        string
-	IPAddr          string
-	ListenPort      string
-	Location        string
-	ConnectionLimit string
-	ConnectionCount string
-	HeartBeat       string
-	Accelerometer   string
-	GPS             string
-	Light           string
-	Temperature     string
-	Orientation     string
+	ID                    string
+	DeviceID              string
+	IPAddr                string
+	ListenPort            string
+	Location              string
+	ConnectionLimit       string
+	ConnectionCount       string
+	HeartBeat             string
+	Accelerometer         string
+	GPS                   string
+	Light                 string
+	Temperature           string
+	Orientation           string
+	deviceConnectionCount int
+	deviceConnectionLimit int
 )
 
 //The store is a map containing structs of type Device.
@@ -214,14 +216,12 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 
 func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	var deviceConnectionCount int
-	var deviceConnectionLimit int
 	rows, err := GetDeviceConnectionStmt.Query(deviceID)
 	if err != nil {
 		log.Printf("Error running GetDeviceConnectionStmt %s", err.Error())
 	}
 	for rows.Next() {
-		err := rows.Scan(&connectionCount, &ConnectionLimit)
+		err := rows.Scan(&deviceConnectionCount, &deviceConnectionLimit)
 		if err != nil {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
@@ -238,14 +238,12 @@ func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 
 func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	var deviceConnectionCount int
-	var deviceConnectionLimit int
 	rows, err := GetDeviceConnectionStmt.Query(deviceID)
 	if err != nil {
 		log.Printf("Error running GetDeviceConnectionStmt %s", err.Error())
 	}
 	for rows.Next() {
-		err = rows.Scan(&connectionCount, &ConnectionLimit)
+		err = rows.Scan(&deviceConnectionCount, &deviceConnectionLimit)
 		if err != nil {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
