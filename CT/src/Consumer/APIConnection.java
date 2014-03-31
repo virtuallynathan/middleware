@@ -3,6 +3,7 @@ package Consumer;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
@@ -33,6 +34,10 @@ public class APIConnection {
 		return registerDevice;
 	}
 	
+	public String heartbeat(){
+		return heartbeat;
+	}
+	
 	public HttpResponse post(String method, String params){
 		
 		HttpResponse response = null;
@@ -61,7 +66,19 @@ public class APIConnection {
 	}
 	
 	
-	public void get(){
+	public HttpResponse get(String method, String params){
+		
+		HttpResponse response = null;
+		HttpClient hc = HttpClients.createDefault();
+		HttpGet httpget = new HttpGet(server + method + params);
+		try{
+			//execute and get response
+			response = hc.execute(httpget);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}		
+		return response;
 		
 	}
 

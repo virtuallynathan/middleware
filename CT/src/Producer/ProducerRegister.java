@@ -19,7 +19,7 @@ public class ProducerRegister {
 	 * Using API method POST device/add
 	 */
 	public void registerProducer(Producer p){
-		
+
 		APIConnection api = new APIConnection();
 		HttpResponse response = api.post(api.register(), p.createJsonNoId());
 		try{
@@ -43,22 +43,15 @@ public class ProducerRegister {
 	public void producerHeartBeat(Producer p){
 
 		if(p.testRegistered()){
-
-			HttpClient hc = HttpClients.createDefault();
-			HttpGet httpget = new HttpGet("http://middleware.nathan.io:8080/device/heartbeat/" + p.device_id);
 			try{
 				//execute and get response
-				HttpResponse response = hc.execute(httpget);
-				HttpEntity entity = response.getEntity();
-				//tests response ok
-				if (entity!=null){
-					System.out.println(response.toString());
-					int code = response.getStatusLine().getStatusCode();
-					if(code==200){
-						System.out.println("Heartbeat Registered");
-					}else{
-						System.out.println("Heartbeat Failed Status code"+ code);
-					}
+				APIConnection api = new APIConnection();
+				HttpResponse response = api.get(api.heartbeat(), p.device_id);
+				System.out.println(response.toString()); /////////////////remove just to show response for now
+				if(api.testResponseOK(response)){
+	
+				}else{
+					System.out.println("Bad Response heartbeat!");
 				}
 			}catch(Exception e){
 				e.printStackTrace();
