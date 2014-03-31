@@ -1,5 +1,7 @@
 package Consumer;
 
+import org.json.JSONObject;
+
 /**Class to hold state for consumers, allows construction with
  * default values, or with given parameters.
  */
@@ -50,5 +52,14 @@ public class Consumer {
 		this.gravity = b;
 		this.orientation = b;
 		this.temperature = b;		
+	}
+	
+	/**Convert to the JSON 
+	 * @return
+	 */
+	public String consumerToJSON(){		
+		
+		JSONObject json = new JSONObject();
+		return json.toString();
 	}
 }

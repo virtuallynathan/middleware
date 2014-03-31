@@ -10,6 +10,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import Consumer.APIConnection;
+
 public class ProducerRegister {
 
 
@@ -17,18 +19,11 @@ public class ProducerRegister {
 	 * Using API method POST device/add
 	 */
 	public void registerProducer(Producer p){
-
-		HttpClient hc = HttpClients.createDefault();
-		HttpPost httppost = new HttpPost("http://middleware.nathan.io:8080/device/add");		
-		try{			
-			//set parameters as JSON
-			String jsonstring = p.createJsonNoId();
-			StringEntity params = new StringEntity(jsonstring);
-			httppost.setEntity(params);	
-			//Execute and get the response.
-			HttpResponse response = hc.execute(httppost);
+		
+		APIConnection api = new APIConnection();
+		HttpResponse response = api.post(api.register(), p.createJsonNoId());
+		try{
 			HttpEntity entity = response.getEntity();
-
 			//tests if response is null, if not sets device id
 			if(entity!=null){
 				System.out.println(response.toString());
