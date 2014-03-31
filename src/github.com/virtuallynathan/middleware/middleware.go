@@ -178,21 +178,13 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson("OK")
 }
 
-//This function queries the database returns the device matching the DeviceID provided.
-func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
-	deviceID := r.PathParam("DeviceID")
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
-	device := Device{}
-	rows, err := deviceIDStmt.Query(deviceID)
-	if err != nil {
-		log.Fatalf("Error running deviceIDStmt %s", err.Error())
-	}
-	//TODO: put this shit in a function, DRY.
+func ProcessDeviceQuery(rs *Rows) []*Device {
+	devices := make([]*Device, 100)
 	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+	for rs.Next() {
+		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
+			log.Fatalf("Error scanning rows %s", err.Error())
 		}
 		device.DeviceID = DeviceID
 		device.IPAddr = IPAddr
@@ -209,6 +201,17 @@ func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 
 		i++
 	}
+}
+
+//This function queries the database returns the device matching the DeviceID provided.
+func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
+	deviceID := r.PathParam("DeviceID")
+	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
+	rows, err := deviceIDStmt.Query(deviceID)
+	if err != nil {
+		log.Fatalf("Error running deviceIDStmt %s", err.Error())
+	}
+	devices = ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 
 }
