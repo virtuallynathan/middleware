@@ -246,12 +246,11 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "sensors Orientation t/f required", 400)
 		return
 	}
-	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
 	rows, err := deviceSensorStmt.Query(sensors.Accelerometer, sensors.GPS, sensors.Light, sensors.Temperature, sensors.Orientation)
 	if err != nil {
 		log.Fatalf("Error running deviceSensorStmt %s", err.Error())
 	}
-	devices = ProcessDeviceQuery(rows)
+	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 }
 
