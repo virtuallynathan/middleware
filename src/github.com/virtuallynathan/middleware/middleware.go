@@ -178,7 +178,7 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson("OK")
 }
 
-func ProcessDeviceQuery(rs *Rows) []*Device {
+func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	device := Device{}
 	devices := make([]*Device, 100)
 	i := 0
