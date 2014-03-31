@@ -245,7 +245,7 @@ func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 		log.Printf("Error running GetDeviceConnectionStmt %s", err.Error())
 	}
 	for rows.Next() {
-		err := rows.Scan(&connectionCount, &ConnectionLimit)
+		err = rows.Scan(&connectionCount, &ConnectionLimit)
 		if err != nil {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
