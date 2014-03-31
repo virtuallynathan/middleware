@@ -247,34 +247,11 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
-	device := Device{}
 	rows, err := deviceSensorStmt.Query(sensors.Accelerometer, sensors.GPS, sensors.Light, sensors.Temperature, sensors.Orientation)
 	if err != nil {
 		log.Fatalf("Error running deviceSensorStmt %s", err.Error())
 	}
-
-	//TODO: put this shit in a function, DRY.
-	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
-		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
-		}
-		device.DeviceID = DeviceID
-		device.IPAddr = IPAddr
-		device.ListenPort = ListenPort
-		device.Location = Location
-		device.ConnectionLimit = ConnectionLimit
-		device.HeartBeat = HeartBeat
-		device.Accelerometer = Accelerometer
-		device.GPS = GPS
-		device.Light = Light
-		device.Temperature = Temperature
-		device.Orientation = Orientation
-		devices[i] = &device
-
-		i++
-	}
+	devices = ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 }
 
@@ -282,7 +259,6 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	sensorLocationQuery := SensorLocationQuery{}
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
-	device := Device{}
 	err := r.DecodeJsonPayload(&sensorLocationQuery)
 	if err != nil {
 		rest.Error(w, err.Error(), http.StatusInternalServerError)
@@ -300,65 +276,19 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Fatalf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
 	}
-
-	//TODO: put this shit in a function, DRY.
-	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
-		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
-		}
-		device.DeviceID = DeviceID
-		device.IPAddr = IPAddr
-		device.ListenPort = ListenPort
-		device.Location = Location
-		device.ConnectionLimit = ConnectionLimit
-		device.HeartBeat = HeartBeat
-		device.Accelerometer = Accelerometer
-		device.GPS = GPS
-		device.Light = Light
-		device.Temperature = Temperature
-		device.Orientation = Orientation
-		devices[i] = &device
-
-		i++
-	}
-
+	devices = ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
-
 }
 
 //This function queries the database and returns the device(s) that are in a specific Location.
 func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	location := r.PathParam("Location")
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
-	device := Device{}
 	rows, err := deviceLocationStmt.Query(location)
 	if err != nil {
 		log.Fatalf("Error running deviceLocationStmt %s", err.Error())
 	}
-	//TODO: put this shit in a function, DRY.
-	i := 0
-	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
-		if err != nil {
-			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
-		}
-		device.DeviceID = DeviceID
-		device.IPAddr = IPAddr
-		device.ListenPort = ListenPort
-		device.Location = Location
-		device.ConnectionLimit = ConnectionLimit
-		device.HeartBeat = HeartBeat
-		device.Accelerometer = Accelerometer
-		device.GPS = GPS
-		device.Light = Light
-		device.Temperature = Temperature
-		device.Orientation = Orientation
-		devices[i] = &device
-
-		i++
-	}
+	devices = ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
 }
 
