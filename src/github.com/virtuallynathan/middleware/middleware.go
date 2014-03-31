@@ -332,6 +332,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device ConnectionLimit required", 400)
 		return
 	}
+	log.Printf("%s", device.Accelerometer)
 	if device.Accelerometer == "" {
 		rest.Error(w, "device Accelerometer t/f required", 400)
 		return
