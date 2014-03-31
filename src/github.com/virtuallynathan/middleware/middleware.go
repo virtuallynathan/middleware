@@ -13,18 +13,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
-var addDeviceStmt *sql.Stmt
-var removeDeviceStmt *sql.Stmt
-var deviceIDStmt *sql.Stmt
-var deviceLocationStmt *sql.Stmt
-var deviceSensorStmt *sql.Stmt
-var DeviceBySensorAndLocationStmt *sql.Stmt
-var DeviceHeartBeatStmt *sql.Stmt
-var UpdateDeviceLocationStmt *sql.Stmt
-var UpdateDeviceConnectionStmt *sql.Stmt
-var GetDeviceConnectionStmt *sql.Stmt
-
 func main() {
 
 	//Set the number of threads to use
@@ -136,64 +124,51 @@ func main() {
 
 }
 
+//This declares all of the global sql variables
+var (
+	db                            *sql.DB
+	addDeviceStmt                 *sql.Stmt
+	removeDeviceStmt              *sql.Stmt
+	deviceIDStmt                  *sql.Stmt
+	deviceLocationStmt            *sql.Stmt
+	deviceSensorStmt              *sql.Stmt
+	DeviceBySensorAndLocationStmt *sql.Stmt
+	DeviceHeartBeatStmt           *sql.Stmt
+	UpdateDeviceLocationStmt      *sql.Stmt
+	UpdateDeviceConnectionStmt    *sql.Stmt
+	GetDeviceConnectionStmt       *sql.Stmt
+)
+
 //The struct of type Device stores all the information about a single device.
 type Device struct {
-	DeviceID        string
-	IPAddr          string
-	ListenPort      string
-	Location        string
-	ConnectionLimit string
-	ConnectionCount string
-	HeartBeat       string
-	Accelerometer   string
-	GPS             string
-	Light           string
-	Temperature     string
-	Orientation     string
+	DeviceID, IPAddr, ListenPort, Location              string
+	ConnectionLimit, ConnectionCount, HeartBeat         string
+	Accelerometer, GPS, Light, Temperature, Orientation string
 }
 
 type LocationUpdate struct {
-	DeviceID string
-	Location string
+	DeviceID, Location string
 }
 
 //The struct stores the Sensors and location for finding a device based on this information
 type SensorLocationQuery struct {
-	Accelerometer string
-	GPS           string
-	Light         string
-	Temperature   string
-	Orientation   string
-	Location      string
+	Accelerometer, GPS, Light, Temperature, Orientation string
+	Location                                            string
 }
 
 //The struct stores the sensors for finding a device based on this information
 type Sensors struct {
-	Accelerometer string
-	GPS           string
-	Light         string
-	Temperature   string
-	Orientation   string
+	Accelerometer, GPS, Light, Temperature, Orientation string
 }
 
 //temporary assignment variables for adding a device or retrieving a device
 //Used to transfer POST variables or MySQL rows to the Device struct
 var (
-	ID                    string
-	DeviceID              string
-	IPAddr                string
-	ListenPort            string
-	Location              string
-	ConnectionLimit       string
-	ConnectionCount       string
-	HeartBeat             string
-	Accelerometer         string
-	GPS                   string
-	Light                 string
-	Temperature           string
-	Orientation           string
-	deviceConnectionCount int
-	deviceConnectionLimit int
+	DeviceID, IPAddr, ListenPort, Location              string
+	ConnectionLimit, ConnectionCount, HeartBeat         string
+	Accelerometer, GPS, Light, Temperature, Orientation string
+	deviceConnectionCount                               int
+	deviceConnectionLimit                               int
 )
 
 //The store is a map containing structs of type Device.
