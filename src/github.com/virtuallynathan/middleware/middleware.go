@@ -233,8 +233,7 @@ func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 			log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
 		}
 		w.WriteJson("OK")
-	}
-	else {
+	} else {
 		w.WriteJson("Connetion Limit Exceeded")
 	}
 }
