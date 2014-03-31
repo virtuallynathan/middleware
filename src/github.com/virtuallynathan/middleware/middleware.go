@@ -181,7 +181,7 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 //This function takes in SQL rows and returns a map of devices that were in that query
 func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	device := Device{}
-	devices := make([]*Device, 100)
+	var devices []*Device //TODO: make this not an arbirary size
 	i := 0
 	for rs.Next() {
 		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
