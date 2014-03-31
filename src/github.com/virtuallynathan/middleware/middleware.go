@@ -116,6 +116,7 @@ type Device struct {
 	ListenPort      string
 	Location        string
 	ConnectionLimit string
+	HeartBeat       string
 	Accelerometer   string
 	GPS             string
 	Light           string
@@ -151,6 +152,7 @@ var (
 	ListenPort      string
 	Location        string
 	ConnectionLimit string
+	HeartBeat       string
 	Accelerometer   string
 	GPS             string
 	Light           string
@@ -188,7 +190,7 @@ func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 	//TODO: put this shit in a function, DRY.
 	i := 0
 	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
 			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
 		}
@@ -197,6 +199,7 @@ func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 		device.ListenPort = ListenPort
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
+		device.HeartBeat = HeartBeat
 		device.Accelerometer = Accelerometer
 		device.GPS = GPS
 		device.Light = Light
@@ -248,7 +251,7 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 	//TODO: put this shit in a function, DRY.
 	i := 0
 	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
 			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
 		}
@@ -257,6 +260,7 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 		device.ListenPort = ListenPort
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
+		device.HeartBeat = HeartBeat
 		device.Accelerometer = Accelerometer
 		device.GPS = GPS
 		device.Light = Light
@@ -295,7 +299,7 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	//TODO: put this shit in a function, DRY.
 	i := 0
 	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
 			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
 		}
@@ -304,6 +308,7 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 		device.ListenPort = ListenPort
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
+		device.HeartBeat = HeartBeat
 		device.Accelerometer = Accelerometer
 		device.GPS = GPS
 		device.Light = Light
@@ -330,7 +335,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	//TODO: put this shit in a function, DRY.
 	i := 0
 	for rows.Next() {
-		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+		err := rows.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
 			log.Fatalf("Error scanning rows deviceLocationStmt %s", err.Error())
 		}
@@ -339,6 +344,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 		device.ListenPort = ListenPort
 		device.Location = Location
 		device.ConnectionLimit = ConnectionLimit
+		device.HeartBeat = HeartBeat
 		device.Accelerometer = Accelerometer
 		device.GPS = GPS
 		device.Light = Light
@@ -398,7 +404,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device Orientation t/f required", 400)
 		return
 	}
-	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Accelerometer, device.GPS, device.Light, device.Temperature, device.Orientation)
+	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Accelerometer, device.GPS, device.Light, device.Temperature, device.Orientation, time.Now().Unix())
 	if err != nil {
 		log.Fatalf("Error running addDeviceStmt %s", err.Error())
 	}
