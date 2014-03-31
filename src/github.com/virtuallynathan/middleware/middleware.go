@@ -446,7 +446,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device Orientation t/f required", 400)
 		return
 	}
-	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Accelerometer, device.GPS, device.Light, device.Temperature, device.Orientation, time.Now().Unix())
+	_, err = addDeviceStmt.Exec(0, device.DeviceID, device.IPAddr, device.ListenPort, device.Location, device.ConnectionLimit, device.Accelerometer, device.GPS, device.Light, device.Temperature, device.Orientation, time.Now().Unix(), 0)
 	if err != nil {
 		log.Printf("Error running addDeviceStmt %s", err.Error())
 	}
