@@ -21,6 +21,7 @@ var deviceLocationStmt *sql.Stmt
 var deviceSensorStmt *sql.Stmt
 var DeviceBySensorAndLocationStmt *sql.Stmt
 var DeviceHeartBeatStmt *sql.Stmt
+var UpdateDeviceLocationStmt *sql.Stmt
 
 func main() {
 
@@ -54,6 +55,13 @@ func main() {
 		log.Printf(err.Error() + "sql update DeviceHeartBeatStmt prepare")
 	}
 	defer DeviceHeartBeatStmt.Close()
+
+	//Prepare statement for updating a specific device's location by DeviceID
+	UpdateDeviceLocationStmt, err = db.Prepare("UPDATE devices SET Location = ? WHERE DeviceID = ?") // ? = placeholder
+	if err != nil {
+		log.Printf(err.Error() + "sql update UpdateDeviceLocationStmt prepare")
+	}
+	defer UpdateDeviceLocationStmt.Close()
 
 	//Prepare statement selecting a device based on DeviceID
 	deviceIDStmt, err = db.Prepare("SELECT * FROM devices WHERE DeviceID = ?")
@@ -99,6 +107,7 @@ func main() {
 		rest.Route{"POST", "/device/add", AddDevice},
 		rest.Route{"GET", "/device/:DeviceID", GetDeviceByID},
 		rest.Route{"GET", "/device/loc/:Location", GetDeviceByLocation},
+		rest.Route{"POST", "/device/set_loc", SetDeviceLocation},
 		rest.Route{"POST", "/device/sensor", GetDeviceBySensorType},
 		rest.Route{"POST", "/device/sensor_location", GetDeviceBySensorAndLocation},
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
@@ -122,6 +131,11 @@ type Device struct {
 	Light           string
 	Temperature     string
 	Orientation     string
+}
+
+type LocationUpdate struct {
+	DeviceID string
+	Location string
 }
 
 //The struct stores the Sensors and location for finding a device based on this information
@@ -303,6 +317,21 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	}
 	devices := ProcessDeviceQuery(rows)
 	w.WriteJson(&devices)
+}
+
+func SetDeviceLocation(w *rest.ResponseWriter, r *rest.Request) {
+	updateLocation := LocationUpdate{}
+	err := r.DecodeJsonPayload(&updateLocation)
+	if err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_, err = UpdateDeviceLocationStmt.Exec(updateLocation.Location, updateLocation.DeviceID)
+	if err != nil {
+		log.Printf("Error running UpdateDeviceLocationStmt %s", err.Error())
+	}
+	w.WriteJson(&updateLocation)
 }
 
 //This function adds a device to the database, and generates a DeviceID
