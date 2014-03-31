@@ -226,14 +226,17 @@ func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
 	}
+	log.Printf("Count: %d, Limit: %d", deviceConnectionCount, deviceConnectionLimit)
+	deviceConnectionCount = deviceConnectionCount + 1
 	if deviceConnectionCount <= deviceConnectionLimit {
-		_, err := UpdateDeviceConnectionStmt.Exec(deviceConnectionCount + 1)
+		_, err := UpdateDeviceConnectionStmt.Exec(deviceConnectionCount, DeviceID)
 		if err != nil {
 			log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
 		}
 		w.WriteJson("OK")
+	} else {
+		w.WriteJson("Connetion Limit Exceeded")
 	}
-	w.WriteJson("Connetion Limit Exceeded")
 }
 
 func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
@@ -248,7 +251,8 @@ func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
 	}
-	_, err = UpdateDeviceConnectionStmt.Exec(deviceConnectionCount - 1)
+	deviceConnectionCount = deviceConnectionCount - 1
+	_, err = UpdateDeviceConnectionStmt.Exec(deviceConnectionCount-1, DeviceID)
 	if err != nil {
 		log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
 	}
