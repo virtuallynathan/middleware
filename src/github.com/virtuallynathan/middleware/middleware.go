@@ -282,7 +282,7 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device query Location required", 400)
 		return
 	}
-	if sensorLocationQuery.Sensor == "" {
+	if sensorLocationQuery.Accelerometer == "" {
 		rest.Error(w, "device query Sensor required", 400)
 		return
 	}
