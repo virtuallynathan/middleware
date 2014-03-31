@@ -33,7 +33,7 @@ public class RandomConsumerData {
 		Random rand = new Random();
 		c.accelerometer = rand.nextBoolean();
 		c.gps = rand.nextBoolean();
-		c.gravity = rand.nextBoolean();
+		c.light = rand.nextBoolean();
 		c.orientation = rand.nextBoolean();
 		c.temperature = rand.nextBoolean();		
 		return c;		
@@ -51,7 +51,7 @@ public class RandomConsumerData {
 			c.gps = true;
 			break;
 		case 3:
-			c.gravity = true;
+			c.light = true;
 			break;
 		case 4:
 			c.orientation = true;

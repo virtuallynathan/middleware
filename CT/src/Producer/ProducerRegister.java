@@ -21,7 +21,7 @@ public class ProducerRegister {
 	public void registerProducer(Producer p){
 
 		APIConnection api = new APIConnection();
-		HttpResponse response = api.post(api.register(), p.createJsonNoId());
+		HttpResponse response = api.post(api.getRegisterDevice(), p.createJsonNoId());
 		try{
 			System.out.println(response.toString()); /////////////////remove just to show response for now
 			if (api.testResponseOK(response)){	
@@ -46,10 +46,10 @@ public class ProducerRegister {
 			try{
 				//execute and get response
 				APIConnection api = new APIConnection();
-				HttpResponse response = api.get(api.heartbeat(), p.device_id);
+				HttpResponse response = api.get(api.getHeartbeat(), p.device_id);
 				System.out.println(response.toString()); /////////////////remove just to show response for now
 				if(api.testResponseOK(response)){
-	
+
 				}else{
 					System.out.println("Bad Response heartbeat!");
 				}
@@ -60,15 +60,15 @@ public class ProducerRegister {
 			System.out.println("Device not yet registered");
 		}
 	}
-	
-	
+
+
 	/**Helper method to set id of a device
 	 * @param entity
 	 * @param p
 	 * @throws Exception
 	 */
 	private void setDeviceID(HttpEntity entity, Producer p) throws Exception {
-		
+
 		String r = EntityUtils.toString(entity);
 		JSONObject json = new JSONObject(r);
 		String id = (String) json.get("DeviceID");

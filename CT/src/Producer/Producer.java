@@ -2,6 +2,8 @@ package Producer;
 
 import org.json.JSONObject;
 
+import Consumer.APIConnection;
+
 /**Class providing a Producer object and required state
  *
  */
@@ -78,29 +80,20 @@ public class Producer {
 	 * @return
 	 */
 	public String createJsonNoId() {
-		// define key string names
-		String ip_key = "IPAddr";
-		String port_key = "ListenPort";
-		String loc_key = "Location";
-		String connect_key = "ConnectionLimit";
-		String acc_key = "Accelerometer";
-		String gps_key = "GPS";
-		String light_key = "Light";
-		String orien_key = "Orientation";
-		String temp_key = "Temperature";
-		
+		APIConnection api = new APIConnection();
 		JSONObject json = new JSONObject();
 		try {
-			json.put(ip_key, ip_addr);
-			json.put(port_key, port);
-			json.put(loc_key, String.valueOf(location));
-			json.put(connect_key, String.valueOf(connection_limit));
-			json.put(acc_key, String.valueOf(accelerometer));
-			json.put(gps_key, String.valueOf(gps));
-			json.put(light_key, String.valueOf(light));
-			json.put(orien_key, String.valueOf(orientation));
-			json.put(temp_key, String.valueOf(temperature));
+			json.put(api.getIp_key(), ip_addr);
+			json.put(api.getPort_key(), port);
+			json.put(api.getLoc_key(), String.valueOf(location));
+			json.put(api.getConnect_key(), String.valueOf(connection_limit));
+			json.put(api.getAcc_key(), String.valueOf(accelerometer));
+			json.put(api.getGps_key(), String.valueOf(gps));
+			json.put(api.getLight_key(), String.valueOf(light));
+			json.put(api.getOrien_key(), String.valueOf(orientation));
+			json.put(api.getTemp_key(), String.valueOf(temperature));
 		} catch (Exception e) {
+			
 			System.out.println("Json Creation Failed");
 			e.printStackTrace();
 		}

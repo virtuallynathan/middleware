@@ -6,8 +6,16 @@ import junit.framework.TestCase;
  */
 public class ConsumerTest extends TestCase {
 	
-	Consumer c = new Consumer();
-	RandomConsumerData rcd = new RandomConsumerData();
+	Consumer c;
+	RandomConsumerData rcd;
+	
+	@Override protected void setUp()throws Exception{
+		
+		c = new Consumer();
+		rcd = new RandomConsumerData();
+	
+	}
+	
 	
 	/**Test that Consumers are set to the default.
 	 */
@@ -16,7 +24,7 @@ public class ConsumerTest extends TestCase {
 		assertEquals(c.location, -1);
 		assertEquals(c.accelerometer, defaultConsumer);
 		assertEquals(c.gps, defaultConsumer);
-		assertEquals(c.gravity, defaultConsumer);
+		assertEquals(c.light, defaultConsumer);
 		assertEquals(c.orientation, defaultConsumer);
 		assertEquals(c.temperature, defaultConsumer);
 	}
@@ -28,7 +36,7 @@ public class ConsumerTest extends TestCase {
 		assertEquals(c.location, 5);
 		assertEquals(c.accelerometer, false);
 		assertEquals(c.gps, false);
-		assertEquals(c.gravity, true);
+		assertEquals(c.light, true);
 		assertEquals(c.orientation, true);
 		assertEquals(c.temperature,false);
 	}
@@ -38,7 +46,16 @@ public class ConsumerTest extends TestCase {
 	public void testRandomSingleSensor(){
 		
 		rcd.randomSingleSensor(c);
-		assertTrue(c.accelerometer^c.gps^c.gravity^c.orientation^c.temperature);
+		assertTrue(c.accelerometer^c.gps^c.light^c.orientation^c.temperature);
+	}
+	
+	public void testProducerRequest(){
+		
+		//2,6,"123.11.11","12323",false,false,true,true,false
+		
+		c = new Consumer(2,false, false, true, true, false);
+		ConsumerRequests cr = new ConsumerRequests();
+		cr.requestProducer(c);
 	}
 
 }

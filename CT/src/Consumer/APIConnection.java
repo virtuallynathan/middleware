@@ -13,31 +13,84 @@ import org.apache.http.impl.client.HttpClients;
  */
 public class APIConnection {
 	
-	String device_id_key = "DeviceID";
-	String ip_key = "IPAddr";
-	String port_key = "ListenPort";
-	String loc_key = "Location";
-	String connect_key = "ConnectionLimit";
-	String acc_key = "Accelerometer";
-	String gps_key = "GPS";
-	String light_key = "Light";
-	String orien_key = "Orientation";
-	String temp_key = "Temperature";
+	//api json parameter keys
+	private String device_id_key = "DeviceID";
+	private String ip_key = "IPAddr";
+	private String port_key = "ListenPort";
+	private String loc_key = "Location";
+	private String connect_key = "ConnectionLimit";
+	private String acc_key = "Accelerometer";
+	private String gps_key = "GPS";
+	private String light_key = "Light";
+	private String orien_key = "Orientation";
+	private String temp_key = "Temperature";	
+	//api connection configuration
+	private String server = "http://middleware.nathan.io:8080";	
+	private String registerDevice = "/device/add";
+	private String heartbeat = "/device/heartbeat/";
+	private String consumerRequest = "/device/sensor_location";	
 	
-	String server = "http://middleware.nathan.io:8080";
-	
-	String registerDevice = "/device/add";
-	String heartbeat = "/device/heartbeat/";
-	String consumerRequest = "/device/sensor_location/";
-	
-	public String register(){
+	public String getDevice_id_key() {
+		return device_id_key;
+	}
+
+	public String getIp_key() {
+		return ip_key;
+	}
+
+	public String getPort_key() {
+		return port_key;
+	}
+
+	public String getLoc_key() {
+		return loc_key;
+	}
+
+	public String getConnect_key() {
+		return connect_key;
+	}
+
+	public String getAcc_key() {
+		return acc_key;
+	}
+
+	public String getGps_key() {
+		return gps_key;
+	}
+
+	public String getLight_key() {
+		return light_key;
+	}
+
+	public String getOrien_key() {
+		return orien_key;
+	}
+
+	public String getTemp_key() {
+		return temp_key;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public String getRegisterDevice() {
 		return registerDevice;
 	}
-	
-	public String heartbeat(){
+
+	public String getHeartbeat() {
 		return heartbeat;
 	}
+
+	public String getConsumerRequest() {
+		return consumerRequest;
+	}	
 	
+	/**Method to send Post to the API
+	 * @param method
+	 * @param params
+	 * @return
+	 */
 	public HttpResponse post(String method, String params){
 		
 		HttpResponse response = null;
@@ -55,7 +108,7 @@ public class APIConnection {
 			return response;	
 	}
 	
-	/**Confirm Status line ok
+	/**Confirm Status line of a response is ok
 	 * @param r
 	 * @return
 	 */
@@ -66,6 +119,11 @@ public class APIConnection {
 	}
 	
 	
+	/**Method to send GET to API
+	 * @param method
+	 * @param params
+	 * @return
+	 */
 	public HttpResponse get(String method, String params){
 		
 		HttpResponse response = null;
