@@ -20,59 +20,76 @@ var deviceIDStmt *sql.Stmt
 var deviceLocationStmt *sql.Stmt
 var deviceSensorStmt *sql.Stmt
 var DeviceBySensorAndLocationStmt *sql.Stmt
+var DeviceHeartBeatStmt *sql.Stmt
 
 func main() {
 
+	//Set the number of threads to use
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	//Begin database conneciton
+
+	//Begin database conneciton setup and query setup
+	//"open" a connection to the database - does not actually connect at this point.
 	db, err := sql.Open("mysql", "root:compsci123@tcp(173.194.80.185:3306)/middleware")
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}
 	defer db.Close()
 
+	//Ping the database, an attempt to connect to verify the above information
 	err = db.Ping()
 	if err != nil {
 		log.Fatalf("Error connecting to database: %v", err)
 	}
 
-	// Prepare statement for inserting data
+	//Prepare statement for inserting data
 	addDeviceStmt, err = db.Prepare("INSERT INTO devices VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )") // ? = placeholder
 	if err != nil {
 		log.Fatalf(err.Error() + "sql insert addDeviceStmt prepare")
 	}
 	defer addDeviceStmt.Close()
 
-	// Prepare statement for reading data
+	//Prepare statement for updating a specific device's heartbeat time by DeviceID
+	DeviceHeartBeatStmt, err = db.Prepare("UPDATE devices SET HeartBeat = ? WHERE DeviceID = ?") // ? = placeholder
+	if err != nil {
+		log.Fatalf(err.Error() + "sql update DeviceHeartBeatStmt prepare")
+	}
+	defer DeviceHeartBeatStmt.Close()
+
+	//Prepare statement selecting a device based on DeviceID
 	deviceIDStmt, err = db.Prepare("SELECT * FROM devices WHERE DeviceID = ?")
 	if err != nil {
 		log.Fatalf(err.Error() + "sql select deviceIDStmt prepare")
 	}
 	defer deviceIDStmt.Close()
 
+	//Prepare statement for selecting devices based on Location
 	deviceLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Location = ?")
 	if err != nil {
 		log.Fatalf(err.Error() + "sql select deviceLocationStmt prepare")
 	}
 	defer deviceLocationStmt.Close()
 
+	//Prepare statement for selecting devices based on Sensor(s)
 	deviceSensorStmt, err = db.Prepare("SELECT * FROM devices WHERE Accelerometer = ? AND GPS = ? AND Light = ? AND Temperature = ? AND Orientation = ?")
 	if err != nil {
 		log.Fatalf(err.Error() + "sql select deviceSensorStmt prepare")
 	}
 	defer deviceSensorStmt.Close()
 
-	DeviceBySensorAndLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Accelerometer = ? AND Location = ?")
+	//Prepare statement for selecting devices based on Sensors(s) and Location
+	DeviceBySensorAndLocationStmt, err = db.Prepare("SELECT * FROM devices WHERE Accelerometer = ? AND GPS = ? AND Light = ? AND Temperature = ? AND Orientation = ? AND Location = ?")
 	if err != nil {
 		log.Fatalf(err.Error() + "sql select DeviceBySensorAndLocationStmt prepare")
 	}
 	defer DeviceBySensorAndLocationStmt.Close()
 
+	//Prepare statement for deleteing a device based on DeviceID
 	removeDeviceStmt, err = db.Prepare("DELETE FROM devices WHERE DeviceID = ?")
 	if err != nil {
 		log.Fatalf(err.Error() + "sql select removeDeviceStmt prepare")
 	}
 	defer removeDeviceStmt.Close()
+	//End database query setup
 
 	//Begin HTTP handling
 	handler := rest.ResourceHandler{
@@ -85,6 +102,7 @@ func main() {
 		rest.Route{"POST", "/device/sensor", GetDeviceBySensorType},
 		rest.Route{"POST", "/device/sensor_location", GetDeviceBySensorAndLocation},
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
+		rest.Route{"GET", "/device/heartbeat/:DeviceID", SetDeviceHeatBeat},
 		rest.Route{"GET", "/health/:check", HealthCheck},
 	)
 	http.ListenAndServe(":8080", &handler)
@@ -105,11 +123,17 @@ type Device struct {
 	Orientation     string
 }
 
+//The struct stores the Sensors and location for finding a device based on this information
 type SensorLocationQuery struct {
-	Sensor   string
-	Location string
+	Accelerometer string
+	GPS           string
+	Light         string
+	Temperature   string
+	Orientation   string
+	Location      string
 }
 
+//The struct stores the sensors for finding a device based on this information
 type Sensors struct {
 	Accelerometer string
 	GPS           string
@@ -118,7 +142,8 @@ type Sensors struct {
 	Orientation   string
 }
 
-//temporary assignment variables
+//temporary assignment variables for adding a device or retrieving a device
+//Used to transfer POST variables or MySQL rows to the Device struct
 var (
 	ID              string
 	DeviceID        string
@@ -136,11 +161,21 @@ var (
 //The store is a map containing structs of type Device.
 var store = map[string]*Device{}
 
+//This function is used as health check by the load balancer
 func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson("OK")
 }
 
-//This function searches the store and returns the device matching the ID provided.
+//This function sets the heartbeat for a specific device to the current unix time.
+func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
+	deviceID := r.PathParam("DeviceID")
+	_, err = DeviceHeartBeatStmt.Exec(deviceID, time.Now().Unix())
+	if err != nil {
+		log.Fatalf("Error running DeviceHeartBeatStmt %s", err.Error())
+	}
+}
+
+//This function queries the database returns the device matching the DeviceID provided.
 func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
@@ -174,7 +209,7 @@ func GetDeviceByID(w *rest.ResponseWriter, r *rest.Request) {
 
 }
 
-//This function seatches the list of devices and returns the device(s) that have the sensor(s) specified.
+//This function queries the database and returns the Device(s) that have the Sensor(s) specified.
 func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 	sensors := Sensors{}
 	err := r.DecodeJsonPayload(&sensors)
@@ -233,7 +268,7 @@ func GetDeviceBySensorType(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson(&devices)
 }
 
-//This function adds a device to the store (soon to be moved to Google Cloud Datastore)
+//This function queries the database and returns the Device(s) that have a specific Sensor in a specific Location
 func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 	sensorLocationQuery := SensorLocationQuery{}
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
@@ -282,7 +317,7 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 
 }
 
-//This function seatches the list of devices and returns the device(s) that are in a specific loation.
+//This function queries the database and returns the device(s) that are in a specific Location.
 func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	location := r.PathParam("Location")
 	devices := make([]*Device, 100) //TODO: fix arbitrary size thing...
@@ -315,7 +350,7 @@ func GetDeviceByLocation(w *rest.ResponseWriter, r *rest.Request) {
 	w.WriteJson(&devices)
 }
 
-//This function adds a device to the store (soon to be moved to Google Cloud Datastore)
+//This function adds a device to the database, and generates a DeviceID
 func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 	device := Device{}
 	err := r.DecodeJsonPayload(&device)
@@ -371,7 +406,7 @@ func AddDevice(w *rest.ResponseWriter, r *rest.Request) {
 
 }
 
-//This function removes a device from the store
+//This function removes a device from the database based on DeviceID
 func RemoveDevice(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
 	_, err := removeDeviceStmt.Exec(deviceID)
