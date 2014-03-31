@@ -2,7 +2,7 @@ package Producer;
 
 import org.json.JSONObject;
 
-import Consumer.APIConnection;
+import api.APIConnection;
 
 /**Class providing a Producer object and required state
  *

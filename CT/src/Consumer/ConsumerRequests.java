@@ -3,12 +3,12 @@ package Consumer;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import api.APIConnection;
 
 
 
@@ -23,7 +23,7 @@ public class ConsumerRequests {
 		//HttpResponse response = api.post(api.getConsumerRequest(), c.consumerToJSON());
 		try{
 			System.out.println(response.toString()); /////////////////remove just to show response for now
-			if (api.testResponseOK(response)){	
+			if (api.getResponse(response)==200){	
 				
 				BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 				StringBuilder builder = new StringBuilder();

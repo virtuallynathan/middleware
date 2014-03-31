@@ -2,6 +2,8 @@ package Consumer;
 
 import org.json.JSONObject;
 
+import api.APIConnection;
+
 /**Class to hold state for consumers, allows construction with
  * default values, or with given parameters.
  */

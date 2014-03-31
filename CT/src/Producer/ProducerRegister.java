@@ -2,45 +2,46 @@ package Producer;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import Consumer.APIConnection;
+import api.APIConnection;
 
 public class ProducerRegister {
 
 
 	/**Initial Registration of a Producer with the database.
 	 * Using API method POST device/add
+	 * returns status of reply.
 	 */
-	public void registerProducer(Producer p){
-
+	public int registerProducer(Producer p){
+		
+		int result = 200;
 		APIConnection api = new APIConnection();
 		HttpResponse response = api.post(api.getRegisterDevice(), p.createJsonNoId());
 		try{
 			System.out.println(response.toString()); /////////////////remove just to show response for now
-			if (api.testResponseOK(response)){	
+			result = api.getResponse(response);
+			if (result==200){	
 				HttpEntity entity = response.getEntity();
 				if(entity!=null){					
-					setDeviceID(entity, p);					
+					setDeviceID(entity, p);
+					return result;
 				}	
 			}
+			return result;
 		}catch(Exception e){
 			System.out.println("Failed to post using /device/add");
-			e.printStackTrace();
+			return result;
 		}
 	}
 
 
 	/**Method to send heart beat to the register
+	 * returns true if successful, false if not.
 	 * @param p
 	 */
-	public void producerHeartBeat(Producer p){
+	public boolean producerHeartBeat(Producer p){
 
 		if(p.testRegistered()){
 			try{
@@ -48,16 +49,17 @@ public class ProducerRegister {
 				APIConnection api = new APIConnection();
 				HttpResponse response = api.get(api.getHeartbeat(), p.device_id);
 				System.out.println(response.toString()); /////////////////remove just to show response for now
-				if(api.testResponseOK(response)){
-
+				if(api.getResponse(response)==200){
+					return true;
 				}else{
-					System.out.println("Bad Response heartbeat!");
+					return false;
 				}
 			}catch(Exception e){
-				e.printStackTrace();
+				return false;				
 			}
 		}else{
 			System.out.println("Device not yet registered");
+			return false;
 		}
 	}
 
