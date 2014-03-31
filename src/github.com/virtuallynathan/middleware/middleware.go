@@ -331,7 +331,7 @@ func SetDeviceLocation(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Printf("Error running UpdateDeviceLocationStmt %s", err.Error())
 	}
-	w.WriteJson(&location)
+	w.WriteJson(&updateLocation)
 }
 
 //This function adds a device to the database, and generates a DeviceID
