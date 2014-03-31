@@ -12,54 +12,56 @@ public class ProducerRegister {
 
 	/**Initial Registration of a Producer with the database.
 	 * Using API method POST device/add
-	 * returns status of reply.
+	 * returns status of request 0 if failed
 	 */
 	public int registerProducer(Producer p){
-		
-		int result = 200;
+		int result = 0;
 		APIConnection api = new APIConnection();
 		HttpResponse response = api.post(api.getRegisterDevice(), p.createJsonNoId());
-		try{
-			System.out.println(response.toString()); /////////////////remove just to show response for now
-			result = api.getResponse(response);
-			if (result==200){	
-				HttpEntity entity = response.getEntity();
-				if(entity!=null){					
-					setDeviceID(entity, p);
-					return result;
-				}	
+		if (response!=null){
+			try{
+				System.out.println(response.toString()); /////////////////remove just to show response for now
+				result = api.getResponse(response);
+				if (result==200){	
+					HttpEntity entity = response.getEntity();
+					if(entity!=null){					
+						setDeviceID(entity, p);
+						return result;
+					}	
+				}
+				return result;
+			}catch(Exception e){
+				System.out.println("Failed to post using /device/add");
+				return result;
 			}
-			return result;
-		}catch(Exception e){
-			System.out.println("Failed to post using /device/add");
-			return result;
-		}
+		} return result;
 	}
 
 
 	/**Method to send heart beat to the register
-	 * returns true if successful, false if not.
+	 * returns status of request 0 if failed
 	 * @param p
 	 */
-	public boolean producerHeartBeat(Producer p){
-
+	public int producerHeartBeat(Producer p){
+		int code = 0;
 		if(p.testRegistered()){
 			try{
 				//execute and get response
 				APIConnection api = new APIConnection();
 				HttpResponse response = api.get(api.getHeartbeat(), p.device_id);
-				System.out.println(response.toString()); /////////////////remove just to show response for now
-				if(api.getResponse(response)==200){
-					return true;
-				}else{
-					return false;
-				}
+				if (response!=null){
+					System.out.println(response.toString()); /////////////////remove just to show response for now
+					code = api.getResponse(response);
+					if(code==200){
+						return code;
+					}
+				} return code;
 			}catch(Exception e){
-				return false;				
+				return code;				
 			}
 		}else{
 			System.out.println("Device not yet registered");
-			return false;
+			return code;
 		}
 	}
 
@@ -70,7 +72,6 @@ public class ProducerRegister {
 	 * @throws Exception
 	 */
 	private void setDeviceID(HttpEntity entity, Producer p) throws Exception {
-
 		String r = EntityUtils.toString(entity);
 		JSONObject json = new JSONObject(r);
 		String id = (String) json.get("DeviceID");
