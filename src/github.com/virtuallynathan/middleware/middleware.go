@@ -286,7 +286,7 @@ func GetDeviceBySensorAndLocation(w *rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "device query Sensor required", 400)
 		return
 	}
-	rows, err := DeviceBySensorAndLocationStmt.Query(sensorLocationQuery.Sensor, sensorLocationQuery.Location)
+	rows, err := DeviceBySensorAndLocationStmt.Query(sensorLocationQuery.Accelerometer, sensorLocationQuery.Location)
 	if err != nil {
 		log.Fatalf("Error running DeviceBySensorAndLocationStmt %s", err.Error())
 	}
