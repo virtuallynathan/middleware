@@ -29,7 +29,7 @@ public class APIConnection {
 	private String heartbeat = "/device/heartbeat/";
 	private String consumerRequest = "/device/sensor_location";
 	private String consumerConnect = "/device/connect/:";
-	private String consumerDisconnect = "device/disconnect/:";
+	private String consumerDisconnect = "/device/disconnect/:";
 	
 	public String getConsumerConnect() {
 		return consumerConnect;

@@ -13,9 +13,9 @@ public class ConsumerAPI {
 		ConsumerRequests cr = new ConsumerRequests();
 		Consumer c  = new Consumer(2,false, false, true, true, false);
 		capi.register(c);
-		int result = cr.connectProducer(c);
-		System.out.println(result);
-		result = cr.disconnectProducer(c);
+		//int result = cr.connectProducer(c);
+		//System.out.println(result);
+		int result = cr.disconnectProducer(c);
 		System.out.println(result);
 	}
 	
