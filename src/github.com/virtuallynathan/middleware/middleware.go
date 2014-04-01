@@ -251,7 +251,7 @@ func ProcessDeviceQuery(rs *sql.Rows) []Device {
 	var devices []Device //TODO: make this not an arbirary size
 	i := 0
 	for rs.Next() {
-		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &ConnectionCount, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+		err := rs.Scan(&DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &ConnectionCount, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
