@@ -23,10 +23,7 @@ public class ProducerAPI {
 		Thread t = heartbeat(p);
 		System.out.println("registering again");
 		registerIndividual(p);
-		System.out.println("registered again");
-		
-		
-		
+		System.out.println("registered again");		
 		
 		}
 		
