@@ -139,6 +139,10 @@ var (
 	GetDeviceConnectionStmt       *sql.Stmt
 )
 
+type StatusMessage struct {
+	Message string
+}
+
 //The struct of type Device stores all the information about a single device.
 type Device struct {
 	DeviceID, IPAddr, ListenPort, Location              string
@@ -176,21 +180,27 @@ var store = map[string]*Device{}
 
 //This function is used as health check by the load balancer
 func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
-	w.WriteJson("OK")
+	status = StatusMessage
+	status.Message = "OK"
+	w.WriteJson(&status)
 }
 
 //This function sets the heartbeat for a specific device to the current unix time.
 func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
+	status = StatusMessage
+	status.Message = "OK"
 	_, err := DeviceHeartBeatStmt.Exec(time.Now().Unix(), deviceID)
 	if err != nil {
 		log.Printf("Error running DeviceHeartBeatStmt %s", err.Error())
 	}
-	w.WriteJson("OK")
+	w.WriteJson(&status)
 }
 
 func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
+	status = StatusMessage
+	status.Message = "OK"
 	rows, err := GetDeviceConnectionStmt.Query(deviceID)
 	if err != nil {
 		log.Printf("Error running GetDeviceConnectionStmt %s", err.Error())
@@ -206,14 +216,17 @@ func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 		if err != nil {
 			log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
 		}
-		w.WriteJson("OK")
+		w.WriteJson(&status)
 	} else {
-		w.WriteJson("Connetion Limit Exceeded")
+		status.Message = "ERROR"
+		w.WriteJson(&status)
 	}
 }
 
 func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
+	status = StatusMessage
+	status.Message = "OK"
 	rows, err := GetDeviceConnectionStmt.Query(deviceID)
 	if err != nil {
 		log.Printf("Error running GetDeviceConnectionStmt %s", err.Error())
@@ -228,14 +241,14 @@ func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 	if err != nil {
 		log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
 	}
-	w.WriteJson("OK")
+	w.WriteJson(&status)
 
 }
 
 //This function takes in SQL rows and returns a map of devices that were in that query
-func ProcessDeviceQuery(rs *sql.Rows) []*Device {
+func ProcessDeviceQuery(rs *sql.Rows) []Device {
 	device := Device{}
-	var devices []*Device //TODO: make this not an arbirary size
+	var devices []Device //TODO: make this not an arbirary size
 	i := 0
 	for rs.Next() {
 		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &ConnectionCount, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
@@ -254,7 +267,7 @@ func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 		device.Light = Light
 		device.Temperature = Temperature
 		device.Orientation = Orientation
-		devices = append(devices, &device)
+		devices = append(devices, device)
 
 		i++
 	}
