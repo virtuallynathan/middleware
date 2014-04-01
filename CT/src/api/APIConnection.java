@@ -27,8 +27,18 @@ public class APIConnection {
 	private String server = "http://middleware.nathan.io:8080";	
 	private String registerDevice = "/device/add";
 	private String heartbeat = "/device/heartbeat/";
-	private String consumerRequest = "/device/sensor_location";	
+	private String consumerRequest = "/device/sensor_location";
+	private String consumerConnect = "/device/connect/:";
+	private String consumerDisconnect = "device/disconnect/:";
 	
+	public String getConsumerConnect() {
+		return consumerConnect;
+	}
+
+	public String getConsumerDisconnect() {
+		return consumerDisconnect;
+	}
+
 	public String getDevice_id_key() {
 		return device_id_key;
 	}

@@ -17,7 +17,7 @@ public class Heartbeat implements Runnable {
 			System.out.println("Status is" + status);
 			Thread.currentThread();
 			try{
-				Thread.sleep(120000);
+				Thread.sleep(1200);
 			}catch(Exception e){ System.out.println("Failed to wait");}
 		}
 		//check status?

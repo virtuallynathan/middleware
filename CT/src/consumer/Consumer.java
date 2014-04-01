@@ -20,8 +20,16 @@ public class Consumer {
 	//connection details
 	private String connection_ip;
 	private String connection_port;
+	private String connection_device_id;
 	
-	
+	public String getConnection_device_id() {
+		return connection_device_id;
+	}
+
+	public void setConnection_device_id(String connection_device_id) {
+		this.connection_device_id = connection_device_id;
+	}
+
 	public int getLocation() {
 		return location;
 	}

@@ -49,13 +49,8 @@ public class ProducerRegister {
 				//execute and get response
 				APIConnection api = new APIConnection();
 				HttpResponse response = api.get(api.getHeartbeat(), p.getDevice_id());
-				if (response!=null){
-					System.out.println(response.toString()); /////////////////remove just to show response for now
-					code = api.getResponse(response);
-					if(code==200){
-						return code;
-					}
-				} return code;
+				code = api.getResponse(response);
+				return code;
 			}catch(Exception e){
 				return code;				
 			}

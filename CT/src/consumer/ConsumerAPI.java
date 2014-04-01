@@ -10,16 +10,13 @@ public class ConsumerAPI {
 	public static void main(String[] args) {
 		
 		ConsumerAPI capi = new ConsumerAPI();
-		RandomConsumerData rcd = new RandomConsumerData();
+		ConsumerRequests cr = new ConsumerRequests();
 		Consumer c  = new Consumer(2,false, false, true, true, false);
-		//rcd.setAllRandom(c);
 		capi.register(c);
-		
-	}
-	
-	
-	public void run(){
-		
+		int result = cr.connectProducer(c);
+		System.out.println(result);
+		result = cr.disconnectProducer(c);
+		System.out.println(result);
 	}
 	
 	

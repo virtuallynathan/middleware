@@ -5,14 +5,31 @@ import java.io.InputStreamReader;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import api.APIConnection;
 
-public class ConsumerRequests {
+public class ConsumerRequests {	
+	
+
+	
+	public int connectProducer(Consumer c){		
+		int result = 0;
+		APIConnection api = new APIConnection();
+		HttpResponse response = api.get(api.getConsumerConnect(), c.getConnection_device_id());
+		result = api.getResponse(response);		
+		return result;
+	}
+	
+	public int disconnectProducer(Consumer c){		
+		int result = 0;
+		APIConnection api = new APIConnection();
+		HttpResponse response = api.get(api.getConsumerDisconnect(), c.getConnection_device_id());
+		result = api.getResponse(response);
+		return result;
+	}	
 	
 	/**Requests mobile device for the producer
 	 * returns the HTTP response code and 0 if
@@ -40,9 +57,11 @@ public class ConsumerRequests {
 					JSONObject json = jsonArray.getJSONObject(0);					
 					String port = (String) json.get(api.getPort_key());
 					String ip = (String) json.get(api.getIp_key());
+					String device = (String) json.get(api.getDevice_id_key());
 					c.setConnection_ip(ip);
-					c.setConnection_port(port);				
-					System.out.println(c.getConnection_port() + " and " + c.getConnection_ip());	////////////////////////////////////////// remove			
+					c.setConnection_port(port);
+					c.setConnection_device_id(device);
+					System.out.println(c.getConnection_port() + " and " + c.getConnection_ip() + "and" + c.getConnection_device_id());	////////////////////////////////////////// remove			
 					return result;				
 				}
 			}
