@@ -237,11 +237,16 @@ func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
 	}
-	_, err = UpdateDeviceConnectionStmt.Exec(deviceConnectionCount-1, deviceID)
-	if err != nil {
-		log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
+	if deviceConnectionCount >= 0 {
+		_, err = UpdateDeviceConnectionStmt.Exec(deviceConnectionCount-1, deviceID)
+		if err != nil {
+			log.Printf("Error running UpdateDeviceConnectionStmt %s", err.Error())
+		}
+		w.WriteJson(&status)
+	} else {
+		status.Message = "ERROR"
+		w.WriteJson(&status)
 	}
-	w.WriteJson(&status)
 
 }
 
