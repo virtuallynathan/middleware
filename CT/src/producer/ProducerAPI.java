@@ -20,7 +20,10 @@ public class ProducerAPI {
 		
 		if (!register(p))System.out.println("Failure to register");
 		//successful registration
-		heartbeat(p);
+		Thread t = heartbeat(p);
+		System.out.println("registering again");
+		registerIndividual(p);
+		System.out.println("registered again");
 		
 		
 		
@@ -73,11 +76,11 @@ public class ProducerAPI {
 	/**
 	 * @param p
 	 */
-	public void heartbeat(Producer p){
+	public Thread heartbeat(Producer p){
 		ProducerRegister pr = new ProducerRegister();		
 		Thread t = new Thread(new Heartbeat(p,pr));
 		t.start();
-		
+		return t;		
 	}
 	
 
