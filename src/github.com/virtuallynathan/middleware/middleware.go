@@ -254,10 +254,9 @@ func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	device := Device{}
 	var devices []*Device //TODO: make this not an arbirary size
-	ID := 0
 	i := 0
 	for rs.Next() {
-		err := rs.Scan(&ID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &ConnectionCount, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
+		err := rs.Scan(&ID, &DeviceID, &IPAddr, &ListenPort, &Location, &ConnectionLimit, &ConnectionCount, &HeartBeat, &Accelerometer, &GPS, &Light, &Temperature, &Orientation)
 		if err != nil {
 			log.Printf("Error scanning rows %s", err.Error())
 		}
