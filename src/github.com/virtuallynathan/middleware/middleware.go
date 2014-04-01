@@ -180,7 +180,7 @@ var store = map[string]*Device{}
 
 //This function is used as health check by the load balancer
 func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
-	status = StatusMessage
+	status := StatusMessage{}
 	status.Message = "OK"
 	w.WriteJson(&status)
 }
@@ -188,7 +188,7 @@ func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
 //This function sets the heartbeat for a specific device to the current unix time.
 func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	status = StatusMessage
+	status := StatusMessage{}
 	status.Message = "OK"
 	_, err := DeviceHeartBeatStmt.Exec(time.Now().Unix(), deviceID)
 	if err != nil {
@@ -199,7 +199,7 @@ func SetDeviceHeatBeat(w *rest.ResponseWriter, r *rest.Request) {
 
 func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	status = StatusMessage
+	status := StatusMessage{}
 	status.Message = "OK"
 	rows, err := GetDeviceConnectionStmt.Query(deviceID)
 	if err != nil {
@@ -225,7 +225,7 @@ func DeviceConnect(w *rest.ResponseWriter, r *rest.Request) {
 
 func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 	deviceID := r.PathParam("DeviceID")
-	status = StatusMessage
+	status := StatusMessage{}
 	status.Message = "OK"
 	rows, err := GetDeviceConnectionStmt.Query(deviceID)
 	if err != nil {
