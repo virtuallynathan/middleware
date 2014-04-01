@@ -30,7 +30,12 @@ public class APIConnection {
 	private String consumerRequest = "/device/sensor_location";
 	private String consumerConnect = "/device/connect/:";
 	private String consumerDisconnect = "/device/disconnect/:";
+	private String connection_key = "Message";
 	
+	public String getConnection_key() {
+		return connection_key;
+	}
+
 	public String getConsumerConnect() {
 		return consumerConnect;
 	}

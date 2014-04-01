@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -12,24 +13,54 @@ import org.json.JSONTokener;
 import api.APIConnection;
 
 public class ConsumerRequests {	
-	
 
-	
-	public int connectProducer(Consumer c){		
-		int result = 0;
+
+
+	public boolean connectProducer(Consumer c){		
+		boolean result = false;
 		APIConnection api = new APIConnection();
 		HttpResponse response = api.get(api.getConsumerConnect(), c.getConnection_device_id());
-		result = api.getResponse(response);		
-		return result;
+		int code = api.getResponse(response);
+		System.out.println(code);
+		if (code ==200){
+			HttpEntity entity = response.getEntity();
+			if(entity!=null){
+				try{
+					result = checkResponse(entity, c);					
+				}catch(Exception e){ 
+					System.out.println("Exception caught");
+					return result;				
+				}
+			}
+		}	return result;
 	}
 	
-	public int disconnectProducer(Consumer c){		
-		int result = 0;
+	public boolean disconnectProducer(Consumer c){		
+		boolean result = false;
 		APIConnection api = new APIConnection();
 		HttpResponse response = api.get(api.getConsumerDisconnect(), c.getConnection_device_id());
-		result = api.getResponse(response);
+		int code = api.getResponse(response);
+		if (code ==200){
+			HttpEntity entity = response.getEntity();
+			if(entity!=null){			
+				try{
+					result = checkResponse(entity, c);					
+				}catch(Exception e){ 
+					return result;				
+				}
+			}
+		}
 		return result;
 	}	
+	
+	public boolean checkResponse(HttpEntity entity, Consumer c) throws Exception{
+		
+		String r = EntityUtils.toString(entity);
+		APIConnection api = new APIConnection();
+		JSONObject json = new JSONObject(r);
+		String id = (String) json.get(api.getConnection_key());		
+		return id.equalsIgnoreCase("ok");
+	}
 	
 	/**Requests mobile device for the producer
 	 * returns the HTTP response code and 0 if
@@ -54,7 +85,8 @@ public class ConsumerRequests {
 					return 0;
 				}else{
 				    //currently takes first response and uses that port/ip
-					JSONObject json = jsonArray.getJSONObject(0);					
+					JSONObject json = jsonArray.getJSONObject(0);		
+					System.out.println(json.toString());
 					String port = (String) json.get(api.getPort_key());
 					String ip = (String) json.get(api.getIp_key());
 					String device = (String) json.get(api.getDevice_id_key());

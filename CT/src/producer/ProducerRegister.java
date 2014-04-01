@@ -68,8 +68,9 @@ public class ProducerRegister {
 	 */
 	private void setDeviceID(HttpEntity entity, Producer p) throws Exception {
 		String r = EntityUtils.toString(entity);
+		APIConnection api = new APIConnection();
 		JSONObject json = new JSONObject(r);
-		String id = (String) json.get("DeviceID");
+		String id = (String) json.get(api.getDevice_id_key());
 		p.setDevice_id(id);		
 	}
 
