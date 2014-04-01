@@ -12,7 +12,14 @@ public class Heartbeat implements Runnable {
 	
 	@Override
 	public void run() {	
-		pr.producerHeartBeat(p);
+		while(true){
+			int status = pr.producerHeartBeat(p);
+			System.out.println("Status is" + status);
+			Thread.currentThread();
+			try{
+				Thread.sleep(120000);
+			}catch(Exception e){ System.out.println("Failed to wait");}
+		}
 		//check status?
 	}
 

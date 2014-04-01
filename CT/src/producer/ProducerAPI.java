@@ -1,5 +1,6 @@
 package producer;
 
+
 public class ProducerAPI {
 	
 	private final static int REPEATITIONS = 10;
@@ -19,8 +20,8 @@ public class ProducerAPI {
 		
 		if (!register(p))System.out.println("Failure to register");
 		//successful registration
+		heartbeat(p);
 		
-		Thread t = new Thread();
 		
 		
 		
@@ -69,11 +70,13 @@ public class ProducerAPI {
 	}
 	
 	
+	/**
+	 * @param p
+	 */
 	public void heartbeat(Producer p){
-		
-		ProducerRegister pr = new ProducerRegister();
-		int status = pr.producerHeartBeat(p);
-		//check if passed or failed?
+		ProducerRegister pr = new ProducerRegister();		
+		Thread t = new Thread(new Heartbeat(p,pr));
+		t.start();
 		
 	}
 	
