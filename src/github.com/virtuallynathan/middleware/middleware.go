@@ -251,9 +251,9 @@ func DeviceDisconnect(w *rest.ResponseWriter, r *rest.Request) {
 }
 
 //This function takes in SQL rows and returns a map of devices that were in that query
-func ProcessDeviceQuery(rs *sql.Rows) []Device {
+func ProcessDeviceQuery(rs *sql.Rows) []*Device {
 	device := Device{}
-	var devices []Device //TODO: make this not an arbirary size
+	var devices []*Device //TODO: make this not an arbirary size
 	ID := 0
 	i := 0
 	for rs.Next() {
@@ -273,7 +273,7 @@ func ProcessDeviceQuery(rs *sql.Rows) []Device {
 		device.Light = Light
 		device.Temperature = Temperature
 		device.Orientation = Orientation
-		devices = append(devices, device)
+		devices = append(devices, &device)
 
 		i++
 	}
