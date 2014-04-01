@@ -20,17 +20,12 @@ public class ProducerAPI {
 		if (!register(p))System.out.println("Failure to register");
 		//successful registration
 		
-		
+		Thread t = new Thread();
 		
 		
 		
 		}
 		
-		
-		
-		//check success
-		
-		// if failure repeat until tried 10 times then exit
 		
 		//heart beat every 2 minutes
 		
@@ -72,6 +67,16 @@ public class ProducerAPI {
 			}
 		} return true;
 	}
+	
+	
+	public void heartbeat(Producer p){
+		
+		ProducerRegister pr = new ProducerRegister();
+		int status = pr.producerHeartBeat(p);
+		//check if passed or failed?
+		
+	}
+	
 
 	
 }
