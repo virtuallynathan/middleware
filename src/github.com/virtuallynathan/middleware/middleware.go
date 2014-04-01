@@ -119,6 +119,7 @@ func main() {
 		rest.Route{"DELETE", "/device/remove/:DeviceID", RemoveDevice},
 		rest.Route{"GET", "/device/heartbeat/:DeviceID", SetDeviceHeatBeat},
 		rest.Route{"GET", "/health/:check", HealthCheck},
+		rest.Route{"GET", "/mu-53b1eeb7-b4649367-c5d15665-06555dcc", Return42}
 	)
 	http.ListenAndServe(":8080", &handler)
 
@@ -177,6 +178,10 @@ var (
 
 //The store is a map containing structs of type Device.
 var store = map[string]*Device{}
+
+func Return42(w *rest.ResponseWriter, r *rest.Request) {
+	w.writeJSON("42")
+}
 
 //This function is used as health check by the load balancer
 func HealthCheck(w *rest.ResponseWriter, r *rest.Request) {
