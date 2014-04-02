@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ProducerTest (1)" project="CT" tests="3" started="2" failures="0" errors="0" ignored="0">
+  <testsuite name="producer.ProducerTest" incomplete="true">
+    <testcase name="testProducerDefaults" classname="producer.ProducerTest" time="0.0"/>
+    <testcase name="testProducerRegistrationHeartBeat" classname="producer.ProducerTest" incomplete="true"/>
+    <testcase name="testProducerSet" classname="producer.ProducerTest" incomplete="true"/>
+  </testsuite>
+</testrun>

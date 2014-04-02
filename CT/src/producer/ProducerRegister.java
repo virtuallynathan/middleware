@@ -20,7 +20,7 @@ public class ProducerRegister {
 		HttpResponse response = api.post(api.getRegisterDevice(), p.createJsonNoId());
 		if (response!=null){
 			try{
-				System.out.println(response.toString()); /////////////////remove just to show response for now
+				System.out.println("Registration: "+ response.toString()); /////////////////remove just to show response for now
 				result = api.getResponse(response);
 				if (result==200){	
 					HttpEntity entity = response.getEntity();

@@ -14,10 +14,10 @@ public class Heartbeat implements Runnable {
 	public void run() {	
 		while(true){
 			int status = pr.producerHeartBeat(p);
-			System.out.println("Status is" + status);
+			System.out.println("Heartbeat Status is: " + status);
 			Thread.currentThread();
 			try{
-				Thread.sleep(1200);
+				Thread.sleep(12000);
 			}catch(Exception e){ System.out.println("Failed to wait");}
 		}
 		//check status?

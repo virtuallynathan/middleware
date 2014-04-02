@@ -20,11 +20,7 @@ public class ProducerAPI {
 		
 		if (!register(p))System.out.println("Failure to register");
 		//successful registration
-		heartbeat(p);
-		System.out.println("registering again");
-		registerIndividual(p);
-		System.out.println("registered again");		
-		
+		heartbeat(p);		
 		}
 		
 		

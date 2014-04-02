@@ -53,13 +53,15 @@ public class ProducerTest extends TestCase {
 	
 	/**Simply makes call to register producer,
 	 * output to console describes success, ensures
-	 * device id is set in return.
+	 * device id is set in return, and return value
+	 * 200.
 	 */
 	public void testProducerRegistrationHeartBeat(){
 		
 		ProducerRegister pr = new ProducerRegister();
-		pr.registerProducer(p);
+		int code = pr.registerProducer(p);
 		assertNotNull(p.getDevice_id());
+		assertEquals(200,code);
 		pr.producerHeartBeat(p);
 	}
 	

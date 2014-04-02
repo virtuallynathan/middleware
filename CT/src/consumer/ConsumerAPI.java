@@ -14,9 +14,9 @@ public class ConsumerAPI {
 		Consumer c  = new Consumer(2,false, false, true, true, false);
 		capi.register(c);
 		boolean result = cr.connectProducer(c);
-		System.out.println(result);
+		System.out.println("The connection was " + result);
 		result = cr.disconnectProducer(c);
-		System.out.println(result);
+		System.out.println("The disconnection was " + result);		
 	}
 	
 	

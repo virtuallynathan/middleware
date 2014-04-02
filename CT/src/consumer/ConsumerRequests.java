@@ -21,7 +21,7 @@ public class ConsumerRequests {
 		APIConnection api = new APIConnection();
 		HttpResponse response = api.get(api.getConsumerConnect(), c.getConnection_device_id());
 		int code = api.getResponse(response);
-		System.out.println(code);
+		System.out.println("Connection to producer request status:" + code);
 		if (code ==200){
 			HttpEntity entity = response.getEntity();
 			if(entity!=null){
@@ -92,8 +92,7 @@ public class ConsumerRequests {
 					String device = (String) json.get(api.getDevice_id_key());
 					c.setConnection_ip(ip);
 					c.setConnection_port(port);
-					c.setConnection_device_id(device);
-					System.out.println(c.getConnection_port() + " and " + c.getConnection_ip() + "and" + c.getConnection_device_id());	////////////////////////////////////////// remove			
+					c.setConnection_device_id(device);			
 					return result;				
 				}
 			}
